@@ -53,9 +53,12 @@ class PostTest extends TestCase
         ]);
     }
 
-    // Postlar royxatini ochilishi READ
-    public function test_posts_can_be_viewed(): void
+    // Post tahrirlash sahifasi ochilishi EDIT
+    public function test_user_can_open_edit_post_page(): void
     {
+        $role = Role::firstOrCreate(['name' => 'blogger']);
+        $this->user->roles()->attach($role->id);
+
         $post = Post::create([
             'user_id' => $this->user->id,
             'category_id' => $this->category->id,
@@ -66,13 +69,13 @@ class PostTest extends TestCase
             'duration' => 3,
         ]);
 
-        $response = $this->get(route('posts.index'));
+        $response = $this->actingAs($this->user)
+            ->get(route('posts.edit', $post));
 
         $response->assertOk();
-        $response->assertViewIs('posts.index');
+        $response->assertViewIs('posts.edit');
         $response->assertSee('Test post');
     }
-
     // Post malumotlari uzgartirillishi UPDATE
     public function test_user_can_update_post(): void
     {
