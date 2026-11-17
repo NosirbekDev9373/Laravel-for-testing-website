@@ -116,14 +116,12 @@ class PostController extends Controller
     // Edit
     public function edit(Post $post)
     {
-        /* Gate::authorize('update-post', $post); */
         $this->authorize('update', $post);
 
-        $categories = Category::all();
-
         return view('posts.edit')->with([
-            'post' => $post,
-            'categories' => $categories,
+            'post' => $post->load('tags'),
+            'categories' => Category::orderBy('name')->get(),
+            'tags' => Tag::orderBy('name')->get(),
         ]);
     }
 
@@ -141,40 +139,38 @@ class PostController extends Controller
             'duration' => $request->input('duration'),
         ];
 
+        $oldFiles = [];
+
         // Asosiy rasm
         if ($request->hasFile('image')) {
-            if ($post->image) {
-                Storage::disk('public')->delete($post->image);
-            }
-            $name = $request->file('image')->getClientOriginalName();
-            $data['image'] = $request->file('image')->storeAs('post-images', $name, 'public');
+            $oldFiles[] = $post->image;
+            $data['image'] = $request->file('image')->store('post-images', 'public');
         }
 
         // Hover rasm
         if ($request->hasFile('image_hover')) {
-            if ($post->image_hover) {
-                Storage::disk('public')->delete($post->image_hover);
-            }
-            $name = $request->file('image_hover')->getClientOriginalName();
-            $data['image_hover'] = $request->file('image_hover')->storeAs('post-images', $name, 'public');
+            $oldFiles[] = $post->image_hover;
+            $data['image_hover'] = $request->file('image_hover')->store('post-images', 'public');
         }
 
         // Galereya
         if ($request->hasFile('gallery_images')) {
-            if ($post->gallery_images) {
-                foreach ($post->gallery_images as $old) {
-                    Storage::disk('public')->delete($old);
-                }
-            }
+            $oldFiles = array_merge($oldFiles, $post->gallery_images ?? []);
+
             $galleryPath = [];
             foreach ($request->file('gallery_images') as $file) {
-                $name = time().'_'.$file->getClientOriginalName();
-                $galleryPath[] = $file->storeAs('post-images', $name, 'public');
+                $galleryPath[] = $file->store('post-images', 'public');
             }
-            $data['gallery_images'] = $galleryPath;
+            $data['gallery_images'] = $galleryPath ?: null;
         }
 
         $post->update($data);
+        $post->tags()->sync($request->input('tags', []));
+
+        foreach (array_filter($oldFiles) as $oldFile) {
+            Storage::disk('public')->delete($oldFile);
+        }
+
         Cache::flush();
 
         return redirect()->route('posts.index')->with('success', __('Post muvaffaqiyatli tahrirlandi!'));

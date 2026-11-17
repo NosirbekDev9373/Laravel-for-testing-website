@@ -38,7 +38,7 @@ class StorePostRequest extends FormRequest
      */
     public function rules(): array
     {
-        $creating = $this->isMethod('post');
+        $creating = $this->routeIs('posts.store');
 
         return [
             'title' => ['required', 'string', 'max:255'],
