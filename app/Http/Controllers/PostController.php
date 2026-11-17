@@ -2,36 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Notifications\PostDeletedNotification;
-use Illuminate\Support\Facades\Mail;
 use App\Events\PostCreated as PostCreatedEvent;
 use App\Http\Requests\StorePostRequest;
 use App\Jobs\ChangePost;
-use App\Jobs\UploadBigFile;
 use App\Models\Category;
-use App\Models\Tag;
 use App\Models\Post;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use App\Policies\PostPolicy;
-use App\Providers\AppServiceProvider;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Models\Tag;
+use App\Models\User;
 use App\Notifications\PostCreatedNotification;
+use App\Notifications\PostDeletedNotification;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
     use AuthorizesRequests;
 
-    //Index
+    // Index
     public function index(Request $request)
     {
         $categories = Category::all();
 
-        $cacheKey = 'posts_category_' . $request->get('category', 'all');
+        $cacheKey = 'posts_category_'.$request->get('category', 'all');
 
         $postIds = Cache::remember($cacheKey, now()->addMinutes(1), function () use ($request) {
             return Post::when($request->category, function ($query) use ($request) {
@@ -47,45 +43,35 @@ class PostController extends Controller
             ->paginate(4);
 
         return view('posts.index', compact('posts', 'categories'));
-        //return Post::limit(10)->get();
+        // return Post::limit(10)->get();
     }
 
-    //Create
+    // Create
     public function create()
     {
+        $this->authorize('create', Post::class);
+
         return view('posts.create')->with([
-            'categories' => \App\Models\Category::all(),
-            'tags' => \App\Models\Tag::all()
+            'categories' => Category::all(),
+            'tags' => Tag::all(),
         ]);
     }
 
-    //Stor
+    // Stor
     public function store(StorePostRequest $request)
     {
-        //dd($request);
+        $this->authorize('create', Post::class);
 
-        // asosiy rasmimiz
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $name = $request->file('image')->getClientOriginalName();
-            $imagePath = $request->file('image')->storeAs('post-images', $name, 'public');
-        }
-        //Hover rasmimz
-        $imageHoverPath = null;
-        if ($request->hasFile('image_hover')) {
-            $name = $request->file('image_hover')->getClientOriginalName();
-            $imageHoverPath = $request->file('image_hover')->storeAs('post-images', $name, 'public');
-        }
-        //Galareya rasmlari
-        $galleryPath = null;
-        if ($request->hasFile('gallery_images')) {
-            foreach ($request->file('gallery_images') as $file) {
-                $name = time() . '_' . $file->getClientOriginalName();
-                $galleryPath[] = $file->storeAs('post-images', $name, 'public');
-            }
-        }
+        $imagePath = $request->file('image')->store('post-images', 'public');
 
+        $imageHoverPath = $request->hasFile('image_hover')
+            ? $request->file('image_hover')->store('post-images', 'public')
+            : null;
 
+        $galleryPath = [];
+        foreach ($request->file('gallery_images', []) as $file) {
+            $galleryPath[] = $file->store('post-images', 'public');
+        }
 
         $post = Post::create([
             'user_id' => auth()->user()->id,
@@ -97,16 +83,14 @@ class PostController extends Controller
             'duration' => $request->input('duration'),
             'image' => $imagePath,
             'image_hover' => $imageHoverPath,
-            'gallery_images' => $galleryPath,
+            'gallery_images' => $galleryPath ?: null,
         ]);
 
-        if ($request->has('tags')) {
-            $post->tags()->sync($request->tags);
-        }
+        $post->tags()->sync($request->input('tags', []));
 
         PostCreatedEvent::dispatch($post);
 
-        //ChangePost::dispatch($post)->onQueue('uploading');
+        // ChangePost::dispatch($post)->onQueue('uploading');
 
         /*Mail::to(auth()->user()->email)
             ->queue((new PostCreatedMail($post))->onQueue('sending-mails'));*/
@@ -116,44 +100,45 @@ class PostController extends Controller
             new PostCreatedNotification($post->title, $post->id)
         );
         Cache::flush();
+
         return redirect()->route('posts.index')->with('success', __('Post muvaffaqiyatli yaratildi!'));
     }
 
-    //show
+    // show
     public function show(Post $post)
     {
         return view('posts.show')->with([
             'post' => $post,
             'related_services' => Post::latest()->get()->except($post->id)->take(5),
-            ]);
+        ]);
     }
 
-    //Edit
+    // Edit
     public function edit(Post $post)
     {
-        /*Gate::authorize('update-post', $post);*/
+        /* Gate::authorize('update-post', $post); */
         $this->authorize('update', $post);
 
+        $categories = Category::all();
 
-        $categories = \App\Models\Category::all();
         return view('posts.edit')->with([
             'post' => $post,
             'categories' => $categories,
-            ]);
+        ]);
     }
 
-    //Update
+    // Update
     public function update(StorePostRequest $request, Post $post)
     {
         $this->authorize('update', $post);
 
         $data = [
-            'title'         => $request->input('title'),
-            'category_id'   => $request->input('category_id'),
+            'title' => $request->input('title'),
+            'category_id' => $request->input('category_id'),
             'short_content' => $request->input('short_content'),
-            'content'       => $request->input('content'),
-            'price'         => $request->input('price'),
-            'duration'      => $request->input('duration'),
+            'content' => $request->input('content'),
+            'price' => $request->input('price'),
+            'duration' => $request->input('duration'),
         ];
 
         // Asosiy rasm
@@ -183,7 +168,7 @@ class PostController extends Controller
             }
             $galleryPath = [];
             foreach ($request->file('gallery_images') as $file) {
-                $name = time() . '_' . $file->getClientOriginalName();
+                $name = time().'_'.$file->getClientOriginalName();
                 $galleryPath[] = $file->storeAs('post-images', $name, 'public');
             }
             $data['gallery_images'] = $galleryPath;
@@ -191,13 +176,14 @@ class PostController extends Controller
 
         $post->update($data);
         Cache::flush();
+
         return redirect()->route('posts.index')->with('success', __('Post muvaffaqiyatli tahrirlandi!'));
     }
 
-    //Delete
+    // Delete
     public function destroy(Post $post)
     {
-        /*Gate::authorize('delete-post', $post);*/
+        /* Gate::authorize('delete-post', $post); */
         $this->authorize('delete', $post);
 
         $user = $post->user;

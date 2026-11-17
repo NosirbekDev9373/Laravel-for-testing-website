@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Models\Role;
-use App\Models\User;
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -16,6 +16,7 @@ class PostTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Category $category;
 
     protected function setUp(): void
@@ -29,9 +30,43 @@ class PostTest extends TestCase
         ]);
     }
 
+    public function test_blogger_can_open_create_post_page(): void
+    {
+        $role = Role::firstOrCreate(['name' => 'blogger']);
+        $this->user->roles()->attach($role->id);
+
+        $response = $this->actingAs($this->user)
+            ->get(route('posts.create'));
+
+        $response->assertOk();
+        $response->assertViewIs('posts.create');
+    }
+
+    public function test_user_without_role_cannot_create_post(): void
+    {
+        Storage::fake('public');
+
+        $response = $this->actingAs($this->user)
+            ->post(route('posts.store'), [
+                'title' => 'Test post',
+                'category_id' => $this->category->id,
+                'short_content' => 'Test qisqa mazmun',
+                'content' => 'Test to‘liq mazmun',
+                'price' => 150,
+                'duration' => 3,
+                'image' => UploadedFile::fake()->image('post.jpg'),
+            ]);
+
+        $response->assertForbidden();
+        $this->assertDatabaseCount('posts', 0);
+    }
+
     // Yangi Post bazaga yaratiladimi   CRETAE
     public function test_user_can_create_post(): void
     {
+        $role = Role::firstOrCreate(['name' => 'blogger']);
+        $this->user->roles()->attach($role->id);
+
         Storage::fake('public');
 
         $response = $this->actingAs($this->user)
@@ -76,6 +111,7 @@ class PostTest extends TestCase
         $response->assertViewIs('posts.edit');
         $response->assertSee('Test post');
     }
+
     // Post malumotlari uzgartirillishi UPDATE
     public function test_user_can_update_post(): void
     {

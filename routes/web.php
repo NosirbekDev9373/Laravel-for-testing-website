@@ -1,13 +1,12 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LocalizationController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\LocalizationController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'main'])->name('main');
@@ -20,7 +19,7 @@ Route::get('lang/{locale}', [LocalizationController::class, 'change'])->name('lo
 
 // Ochiq sahifalar: barcha tashrifchilar postlarni ko‘rishi mumkin.
 Route::get('posts', [PostController::class, 'index'])->name('posts.index');
-Route::get('posts/{post}', [PostController::class, 'show'])->name('posts.show');
+Route::get('posts/{post}', [PostController::class, 'show'])->name('posts.show')->whereNumber('post');
 
 // Autentifikatsiya
 Route::get('login', [AuthController::class, 'login'])->name('login');

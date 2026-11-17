@@ -22,7 +22,7 @@
 
                     <div class="col-12 mb-3">
                         <input type="text" name="title" class="form-control"
-                               value="{{ old('title') }}" placeholder="Sarlavha" required/>
+                               value="{{ old('title') }}" placeholder="Sarlavha" maxlength="255" required/>
                         @error('title')
                         <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
@@ -31,7 +31,9 @@
                         <select name="category_id" class="form-control" required>
                             <option value="">-- Kategoriya tanlang --</option>
                             @foreach($categories as $category)
-                                <option value="{{ $category->id }}"> {{ $category->name }}</option>
+                                <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>
+                                    {{ $category->name }}
+                                </option>
                             @endforeach
                         </select>
                         @error('category_id')
@@ -40,7 +42,7 @@
                     </div>
                     <div class="col-12 mb-3">
                             <textarea name="short_content" rows="2" class="form-control"
-                                      placeholder="Qisqacha mazmuni" required>{{ old('short_content') }}</textarea>
+                                      placeholder="Qisqacha mazmuni" maxlength="1000" required>{{ old('short_content') }}</textarea>
                         @error('short_content')
                         <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
@@ -57,7 +59,7 @@
                     <!-- Asosiy rasm -->
                     <div class="col-12 mb-3">
                         <label>Asosiy rasm</label>
-                        <input type="file" name="image" class="form-control"/>
+                        <input type="file" name="image" class="form-control" accept="image/*" required/>
                         @error('image')
                         <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
@@ -66,7 +68,7 @@
                     <!-- Hover rasm -->
                     <div class="col-12 mb-3">
                         <label>Hover rasm (sichqon ustiga kelganda)</label>
-                        <input type="file" name="image_hover" class="form-control"/>
+                        <input type="file" name="image_hover" class="form-control" accept="image/*"/>
                         @error('image_hover')
                         <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
@@ -74,7 +76,7 @@
 
                     <div class="col-lg-6 col-md-6 col-12 mb-3">
                         <input type="number" name="price" class="form-control"
-                               placeholder="Narxi" value="{{ old('price') }}" required/>
+                               placeholder="Narxi" value="{{ old('price') }}" min="0" step="0.01" required/>
                         @error('price')
                         <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
@@ -82,7 +84,7 @@
 
                     <div class="col-lg-6 col-md-6 col-12 mb-3">
                         <input type="number" name="duration" class="form-control"
-                               placeholder="Ish soati" value="{{ old('duration') }}" required/>
+                               placeholder="Ish soati" value="{{ old('duration') }}" min="0" step="1" required/>
                         @error('duration')
                         <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
@@ -92,8 +94,11 @@
                     <!-- Galereya rasmlari -->
                     <div class="col-12 mb-3">
                         <label>Galereya rasmlari (bir nechta tanlash mumkin)</label>
-                        <input type="file" name="gallery_images[]" class="form-control" multiple/>
+                        <input type="file" name="gallery_images[]" class="form-control" accept="image/*" multiple/>
                         @error('gallery_images')
+                        <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
+                        @error('gallery_images.*')
                         <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
                     </div>
@@ -113,6 +118,9 @@
                             @endforeach
                         </div>
                         @error('tags')
+                        <div class="alert alert-danger mt-1">{{ $message }}</div>
+                        @enderror
+                        @error('tags.*')
                         <div class="alert alert-danger mt-1">{{ $message }}</div>
                         @enderror
                     </div>
