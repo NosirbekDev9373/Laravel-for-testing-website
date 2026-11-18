@@ -25,25 +25,30 @@ class PostController extends Controller
     // Index
     public function index(Request $request)
     {
-        $categories = Category::all();
+        $categories = Category::orderBy('name')->get();
 
-        $cacheKey = 'posts_category_'.$request->get('category', 'all');
+        $categoryId = filter_var($request->query('category'), FILTER_VALIDATE_INT);
+        $categoryId = $categoryId !== false && $categories->contains('id', $categoryId)
+            ? $categoryId
+            : null;
 
-        $postIds = Cache::remember($cacheKey, now()->addMinutes(1), function () use ($request) {
-            return Post::when($request->category, function ($query) use ($request) {
-                $query->where('category_id', $request->category);
+        $cacheKey = 'posts_category_'.($categoryId ?? 'all');
+
+        $postIds = Cache::remember($cacheKey, now()->addMinute(), function () use ($categoryId) {
+            return Post::when($categoryId !== null, function ($query) use ($categoryId) {
+                $query->where('category_id', $categoryId);
             })
                 ->latest()
                 ->pluck('id')
                 ->toArray();
         });
-        // IDlar bo'yicha to'liq model oliw
+
         $posts = Post::whereIn('id', $postIds)
             ->latest()
-            ->paginate(4);
+            ->paginate(4)
+            ->withQueryString();
 
-        return view('posts.index', compact('posts', 'categories'));
-        // return Post::limit(10)->get();
+        return view('posts.index', compact('posts', 'categories', 'categoryId'));
     }
 
     // Create
@@ -99,7 +104,7 @@ class PostController extends Controller
         auth()->user()->notifyNow(
             new PostCreatedNotification($post->title, $post->id)
         );
-        Cache::flush();
+        $this->clearPostIndexCache();
 
         return redirect()->route('posts.index')->with('success', __('Post muvaffaqiyatli yaratildi!'));
     }
@@ -107,9 +112,22 @@ class PostController extends Controller
     // show
     public function show(Post $post)
     {
+        $post->load(['category', 'user', 'tags'])->loadCount('comments');
+
+        $comments = $post->comments()
+            ->with('user')
+            ->latest('id')
+            ->paginate(5);
+
+        $relatedServices = Post::whereKeyNot($post->id)
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('posts.show')->with([
             'post' => $post,
-            'related_services' => Post::latest()->get()->except($post->id)->take(5),
+            'comments' => $comments,
+            'related_services' => $relatedServices,
         ]);
     }
 
@@ -171,7 +189,7 @@ class PostController extends Controller
             Storage::disk('public')->delete($oldFile);
         }
 
-        Cache::flush();
+        $this->clearPostIndexCache();
 
         return redirect()->route('posts.index')->with('success', __('Post muvaffaqiyatli tahrirlandi!'));
     }
@@ -196,9 +214,18 @@ class PostController extends Controller
             }
         }
         $post->delete();
-        Cache::flush();
+        $this->clearPostIndexCache();
         $user->notifyNow(new PostDeletedNotification($post));
 
         return redirect()->route('posts.index')->with('danger', __('Post muvaffaqiyatli o\'chirildi!'));
+    }
+
+    private function clearPostIndexCache(): void
+    {
+        Cache::forget('posts_category_all');
+
+        foreach (Category::pluck('id') as $categoryId) {
+            Cache::forget('posts_category_'.$categoryId);
+        }
     }
 }

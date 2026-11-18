@@ -16,12 +16,12 @@
             </x-alert>
             <div class="d-flex flex-wrap gap-2 mb-4">
                 <a href="{{ route('posts.index') }}"
-                   class="btn btn-sm {{ !request('category') ? 'btn-dark' : 'btn-outline-dark' }}">
+                   class="btn btn-sm {{ !$categoryId ? 'btn-dark' : 'btn-outline-dark' }}">
                     Barchasi
                 </a>
                 @foreach($categories as $category)
                     <a href="{{ route('posts.index', ['category' => $category->id]) }}"
-                       class="btn btn-sm {{ request('category') == $category->id ? 'btn-dark' : 'btn-outline-dark' }}">
+                       class="btn btn-sm {{ $categoryId === $category->id ? 'btn-dark' : 'btn-outline-dark' }}">
                         {{ $category->name }}
                     </a>
                 @endforeach
@@ -33,17 +33,19 @@
         <section class="services-detail-section section-padding">
             <div class="container">
                 <div class="row">
-                    @foreach($posts as $post)
+                    @forelse($posts as $post)
                         <div class="col-lg-6 col-12">
                             <div class="services-thumb section-bg mb-lg-0">
                                 <div class="row">
                                     <div class="col-lg-5 col-md-5 col-12">
                                         <div class="services-image-wrap">
                                             <a href="{{ route('posts.show', ['post' => $post->id]) }}">
-                                                <img src="{{asset('storage/'.$post->image)}}"
-                                                     class="services-image img-fluid" alt="">
-                                                <img src="{{asset('storage/'.$post->image)}}"
-                                                     class="services-image services-image-hover img-fluid" alt="">
+                                                <img src="{{ $post->image_url }}"
+                                                     class="services-image img-fluid" alt="{{ $post->title }}"
+                                                     loading="lazy">
+                                                <img src="{{ $post->hover_image_url }}"
+                                                     class="services-image services-image-hover img-fluid"
+                                                     alt="{{ $post->title }}" loading="lazy">
 
                                                 <div class="services-icon-wrap">
                                                     <div class="d-flex justify-content-between align-items-center">
@@ -98,7 +100,11 @@
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="col-12">
+                            <div class="alert alert-info">Hozircha postlar yo‘q.</div>
+                        </div>
+                    @endforelse
 
                     {{ $posts->links() }}
 
@@ -117,23 +123,23 @@
                     </div>
 
                     <div class="col-lg-2 col-md-4 col-6">
-                        <img src="images/partners/glorix.svg" class="partners-image img-fluid">
+                        <img src="{{ asset('images/partners/glorix.svg') }}" class="partners-image img-fluid" alt="Glorix">
                     </div>
 
                     <div class="col-lg-2 col-md-4 col-6">
-                        <img src="images/partners/rolf-leasing.svg" class="partners-image img-fluid">
+                        <img src="{{ asset('images/partners/rolf-leasing.svg') }}" class="partners-image img-fluid" alt="Rolf Leasing">
                     </div>
 
                     <div class="col-lg-2 col-md-4 col-6">
-                        <img src="images/partners/woocommerce.svg" class="partners-image img-fluid">
+                        <img src="{{ asset('images/partners/woocommerce.svg') }}" class="partners-image img-fluid" alt="WooCommerce">
                     </div>
 
                     <div class="col-lg-2 col-md-4 col-6">
-                        <img src="images/partners/toprak-leasing.svg" class="partners-image img-fluid">
+                        <img src="{{ asset('images/partners/toprak-leasing.svg') }}" class="partners-image img-fluid" alt="Toprak Leasing">
                     </div>
 
                     <div class="col-lg-2 col-md-4 col-6">
-                        <img src="images/partners/unilabs.svg" class="partners-image img-fluid">
+                        <img src="{{ asset('images/partners/unilabs.svg') }}" class="partners-image img-fluid" alt="Unilabs">
                     </div>
 
                 </div>

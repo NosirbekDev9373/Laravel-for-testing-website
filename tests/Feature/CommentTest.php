@@ -15,6 +15,7 @@ class CommentTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Post $post;
 
     protected function setUp(): void
@@ -57,12 +58,37 @@ class CommentTest extends TestCase
             ]);
 
         $response->assertRedirect();
+        $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('comments', [
             'user_id' => $this->user->id,
             'post_id' => $this->post->id,
             'body' => 'Bu mening birinchi izohim',
         ]);
+    }
+
+    public function test_comment_body_cannot_exceed_two_thousand_characters(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->post(route('comments.store'), [
+                'post_id' => $this->post->id,
+                'body' => str_repeat('a', 2001),
+            ]);
+
+        $response->assertSessionHasErrors('body');
+        $this->assertDatabaseCount('comments', 0);
+    }
+
+    public function test_comment_requires_valid_post_id(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->post(route('comments.store'), [
+                'post_id' => 999999,
+                'body' => 'Bu izoh saqlanmasligi kerak',
+            ]);
+
+        $response->assertSessionHasErrors('post_id');
+        $this->assertDatabaseCount('comments', 0);
     }
 
     // READ

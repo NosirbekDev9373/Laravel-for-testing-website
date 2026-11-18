@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
@@ -13,6 +13,7 @@ class Post extends Model
     protected $casts = [
         'gallery_images' => 'array',
     ];
+
     protected $fillable = [
         'user_id',
         'category_id',
@@ -25,6 +26,32 @@ class Post extends Model
         'duration',
         'gallery_images',
     ];
+
+    protected function imageUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $path = $this->image ?: $this->image_hover;
+
+                return $path
+                    ? asset('storage/'.$path)
+                    : asset('images/post-placeholder.svg');
+            },
+        );
+    }
+
+    protected function hoverImageUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $path = $this->image_hover ?: $this->image;
+
+                return $path
+                    ? asset('storage/'.$path)
+                    : asset('images/post-placeholder.svg');
+            },
+        );
+    }
 
     public function user()
     {
@@ -40,14 +67,9 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
     public function tags()
     {
         return $this->belongsToMany(Tag::class);
     }
-
-
-
-
-
-
 }

@@ -3,12 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Role;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -24,11 +26,160 @@ class PostTest extends TestCase
     {
         parent::setUp();
 
+        Cache::flush();
+
         $this->user = User::factory()->create();
 
         $this->category = Category::create([
             'name' => 'Test Category',
         ]);
+    }
+
+    private function createPost(array $overrides = []): Post
+    {
+        return Post::create(array_merge([
+            'user_id' => $this->user->id,
+            'category_id' => $this->category->id,
+            'title' => 'Test post',
+            'short_content' => 'Qisqa mazmun',
+            'content' => 'To‘liq mazmun',
+            'price' => 150,
+            'duration' => 3,
+        ], $overrides));
+    }
+
+    public function test_posts_index_shows_empty_state(): void
+    {
+        $response = $this->get(route('posts.index'));
+
+        $response->assertOk();
+        $response->assertSee('Hozircha postlar yo‘q.');
+    }
+
+    public function test_posts_index_filters_by_valid_category(): void
+    {
+        $otherCategory = Category::create(['name' => 'Other Category']);
+
+        for ($i = 1; $i <= 5; $i++) {
+            $this->createPost([
+                'title' => 'Category post '.$i,
+                'category_id' => $this->category->id,
+            ]);
+        }
+
+        $this->createPost([
+            'title' => 'Other post',
+            'category_id' => $otherCategory->id,
+        ]);
+
+        $response = $this->get(route('posts.index', ['category' => $this->category->id]));
+
+        $response->assertOk();
+        $response->assertSee('Category post 1');
+        $response->assertSee('Category post 4');
+        $response->assertDontSee('Other post');
+        $response->assertViewHas('categoryId', $this->category->id);
+    }
+
+    public function test_posts_index_shows_second_category_page(): void
+    {
+        for ($i = 1; $i <= 5; $i++) {
+            $this->createPost([
+                'title' => 'Category post '.$i,
+            ]);
+        }
+
+        $response = $this->get(route('posts.index', [
+            'category' => $this->category->id,
+            'page' => 2,
+        ]));
+
+        $response->assertOk();
+        $response->assertSee('Category post 5');
+        $response->assertDontSee('Category post 1');
+    }
+
+    public function test_posts_index_ignores_invalid_category_filter(): void
+    {
+        $this->createPost(['title' => 'Visible post']);
+
+        $response = $this->get(route('posts.index', ['category' => 999999]));
+
+        $response->assertOk();
+        $response->assertSee('Visible post');
+        $response->assertViewHas('categoryId', null);
+    }
+
+    public function test_posts_index_uses_hover_image_when_available(): void
+    {
+        $this->createPost([
+            'title' => 'Hover image post',
+            'image' => 'post-images/main.jpg',
+            'image_hover' => 'post-images/hover.jpg',
+        ]);
+
+        $response = $this->get(route('posts.index'));
+
+        $response->assertOk();
+        $response->assertSee(asset('storage/post-images/hover.jpg'), false);
+    }
+
+    public function test_posts_index_uses_placeholder_when_image_is_missing(): void
+    {
+        $this->createPost(['title' => 'No image post']);
+
+        $response = $this->get(route('posts.index'));
+
+        $response->assertOk();
+        $response->assertSee(asset('images/post-placeholder.svg'), false);
+    }
+
+    public function test_show_excludes_current_post_from_related_posts(): void
+    {
+        $post = $this->createPost(['title' => 'Current post']);
+        $relatedPost = $this->createPost(['title' => 'Related post']);
+
+        $response = $this->get(route('posts.show', $post));
+
+        $response->assertOk();
+        $response->assertViewHas('related_services', function ($relatedPosts) use ($post, $relatedPost) {
+            return $relatedPosts->pluck('id')->doesntContain($post->id)
+                && $relatedPosts->pluck('id')->contains($relatedPost->id);
+        });
+        $response->assertSee('Related post');
+    }
+
+    public function test_show_uses_placeholder_when_image_is_missing(): void
+    {
+        $post = $this->createPost(['title' => 'No image post']);
+
+        $response = $this->get(route('posts.show', $post));
+
+        $response->assertOk();
+        $response->assertSee(asset('images/post-placeholder.svg'), false);
+    }
+
+    public function test_show_paginates_comments(): void
+    {
+        $post = $this->createPost(['title' => 'Commented post']);
+
+        for ($i = 1; $i <= 6; $i++) {
+            Comment::create([
+                'post_id' => $post->id,
+                'user_id' => $this->user->id,
+                'body' => 'Comment '.$i,
+            ]);
+        }
+
+        $response = $this->get(route('posts.show', $post));
+
+        $response->assertOk();
+        $response->assertSee('6 Izohlar');
+        $response->assertSee('Comment 6');
+        $response->assertDontSee('Comment 1');
+        $response->assertViewHas('comments', function ($comments) {
+            return $comments->count() === 5 && $comments->hasPages();
+        });
     }
 
     public function test_blogger_can_open_create_post_page(): void
