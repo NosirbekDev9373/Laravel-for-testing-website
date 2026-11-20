@@ -26,7 +26,7 @@ class CommentController extends Controller
 
         // O'zi comment qoldirsa xabar bormasligi
         if ($post->user_id !== auth()->id()) {
-            $post->user->notifyNow(
+            $post->user->notify(
                 new CommentCreatedNotification(
                     postTitle: $post->title,
                     postId: $post->id,

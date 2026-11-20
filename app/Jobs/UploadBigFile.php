@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 class UploadBigFile implements ShouldQueue
 {
     use Queueable;
+
     public $file;
 
     /**

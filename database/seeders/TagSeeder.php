@@ -3,25 +3,38 @@
 namespace Database\Seeders;
 
 use App\Models\Tag;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class TagSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $tags = [
-            ['name' => 'Design'],
-            ['name' => 'Marketing'],
-            ['name' => 'SEO'],
-            ['name' => 'Writing'],
-            ['name' => 'Consulting'],
-            ['name' => 'Development'],
-            ['name' => 'Reading'],
+            'Uy',
+            'Ofis',
+            'Gilam',
+            'Deraza',
+            'Dezinfeksiya',
+            'Remont',
+            'Avto',
+            'HoReCa',
+            'Brending',
+            'Ekologik',
+            'Tez xizmat',
+            'Kafolat',
+            'Professional',
+            'Byudjet',
+            'Ta’mirlash',
+            'IT',
+            'Go‘zallik',
+            'Ta’lim',
+            'Tadbirlar',
+            'Sifat',
+            'Ijodiy',
         ];
-        Tag::insert($tags);
+
+        foreach ($tags as $name) {
+            Tag::firstOrCreate(['name' => $name]);
+        }
     }
 }

@@ -31,6 +31,13 @@ class StorePostRequest extends FormRequest
         return true;
     }
 
+    public function messages(): array
+    {
+        return [
+            'gallery_images.max' => 'Galereya rasmlari 4 tadan oshmasligi kerak.',
+        ];
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -49,7 +56,7 @@ class StorePostRequest extends FormRequest
             'duration' => ['required', 'integer', 'min:0'],
             'image' => [$creating ? 'required' : 'nullable', 'image', 'max:5120'],
             'image_hover' => ['nullable', 'image', 'max:5120'],
-            'gallery_images' => ['nullable', 'array'],
+            'gallery_images' => ['nullable', 'array', 'max:4'],
             'gallery_images.*' => ['image', 'max:5120'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['integer', 'distinct', 'exists:tags,id'],

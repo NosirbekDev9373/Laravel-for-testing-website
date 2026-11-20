@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\PostCreated;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 
 class NotifyAdminNewPost
@@ -22,6 +20,6 @@ class NotifyAdminNewPost
      */
     public function handle(PostCreated $event): void
     {
-        Log::alert('post yaratildi . Sarlavha ' . $event->post->title);
+        Log::alert('post yaratildi . Sarlavha '.$event->post->title);
     }
 }

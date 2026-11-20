@@ -2,32 +2,37 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $user = User::create([
-            'name' => 'Admin123',
-            'email' => 'admin123@example.com',
-            'password' => Hash::make('123123123'),
-        ]);
+        $password = Hash::make(env('SEED_DEFAULT_PASSWORD', 'Demo@12345'));
 
-        $user->roles()->attach([1,3]);
+        $users = [
+            ['name' => 'Administrator', 'email' => 'admin@tozalash.uz', 'role' => 'admin'],
+            ['name' => 'Sardor Rahimov', 'email' => 'sardor@tozalash.uz', 'role' => 'editor'],
+            ['name' => 'Dilnoza Karimova', 'email' => 'dilnoza@tozalash.uz', 'role' => 'blogger'],
+            ['name' => 'Javohir Tursunov', 'email' => 'javohir@tozalash.uz', 'role' => 'blogger'],
+            ['name' => 'Aziza Yusupova', 'email' => 'aziza@tozalash.uz', 'role' => 'user'],
+            ['name' => 'Malika Abdullayeva', 'email' => 'malika@tozalash.uz', 'role' => 'user'],
+            ['name' => 'Bekzod Ismoilov', 'email' => 'bekzod@tozalash.uz', 'role' => 'user'],
+            ['name' => 'Nigora Saidova', 'email' => 'nigora@tozalash.uz', 'role' => 'user'],
+            ['name' => 'Rustam Aliyev', 'email' => 'rustam@tozalash.uz', 'role' => 'user'],
+        ];
 
-        $user2 = User::create([
-            'name' => 'Ali',
-            'email' => 'Ali@gmail.com',
-            'password' => Hash::make('123123123'),
-        ]);
+        foreach ($users as $data) {
+            $user = User::updateOrCreate(
+                ['email' => $data['email']],
+                ['name' => $data['name'], 'password' => $password],
+            );
 
-        $user2->roles()->attach([2]);
+            $role = Role::firstOrCreate(['name' => $data['role']]);
+            $user->roles()->syncWithoutDetaching([$role->id]);
+        }
     }
 }

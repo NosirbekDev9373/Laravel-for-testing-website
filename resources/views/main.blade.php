@@ -1,7 +1,7 @@
 <x-layouts.main>
 
     <x-slot:title>
-        Bosh sahifa
+        {{ __('Bosh sahifa') }}
     </x-slot:title>
 
 <main>
@@ -14,29 +14,31 @@
 
                 <div class="col-lg-7 col-12 text-center mx-auto">
                     <h1 class="cd-headline rotate-1 text-white mb-4 pb-2">
-                        <span>We clean your</span>
+                        <span>{{ __('Platformamizda toping:') }}</span>
                         <span class="cd-words-wrapper">
-                                    <b class="is-visible">House</b>
-                                    <b>Office</b>
-                                    <b>Kitchen</b>
-                                </span>
+                            @forelse($categories->take(5) as $category)
+                                <b @class(['is-visible' => $loop->first])>{{ $category->name }}</b>
+                            @empty
+                                <b class="is-visible">{{ __('xizmatlar') }}</b>
+                            @endforelse
+                        </span>
                     </h1>
 
-                    <a class="custom-btn btn button button--atlas smoothscroll me-3" href="#intro-section">
-                        <span>Introduction</span>
+                    <a class="custom-btn btn button button--atlas me-3" href="{{ route('posts.index') }}">
+                        <span>{{ __('Postlarni ko‘rish') }}</span>
 
                         <div class="marquee" aria-hidden="true">
                             <div class="marquee__inner">
-                                <span>Introduction</span>
-                                <span>Introduction</span>
-                                <span>Introduction</span>
-                                <span>Introduction</span>
+                                <span>{{ __('Postlarni ko‘rish') }}</span>
+                                <span>{{ __('Postlarni ko‘rish') }}</span>
+                                <span>{{ __('Postlarni ko‘rish') }}</span>
+                                <span>{{ __('Postlarni ko‘rish') }}</span>
                             </div>
                         </div>
                     </a>
 
-                    <a class="custom-btn custom-border-btn custom-btn-bg-white btn button button--pan smoothscroll" href="#services-section">
-                        <span>Explore Services</span>
+                    <a class="custom-btn custom-border-btn custom-btn-bg-white btn button button--pan" href="{{ route('about') }}">
+                        <span>{{ __('Biz haqimizda') }}</span>
                     </a>
                 </div>
 
@@ -52,23 +54,25 @@
             <div class="row justify-content-lg-center align-items-center">
 
                 <div class="col-lg-6 col-12">
-                    <h2 class="mb-4">Reliable &amp; Fast Cleaning <br> Service</h2>
+                    <h2 class="mb-4">{{ __('Ishonchli va qulay') }} <br> {{ __('xizmatlar platformasi') }}</h2>
 
-                    <p><a href="#">Clean Work</a> is a Bootstrap v.5.1.3 HTML CSS template for free download provided by Tooplate. You can use this layout for any purpose. Images are taken from <a rel="nofollow" href="https://www.freepik.com/" target="_blank">FreePik</a> and <a rel="nofollow" href="https://worldvectorlogo.com/" target="_blank">WorldVectorLogo</a> websites.</p>
-                    <p>You <strong>may not</strong> redistribute this template ZIP file on any other template collection website. Please <a href="https://www.tooplate.com/contact" target="_blank">contact us</a> for more info. Thank you.</p>
+                    <p>{{ __('Platformamiz orqali turli xizmatlar, mutaxassislar va foydali postlar bilan tanishing. Har bir postda narx, davomiylik va batafsil ma’lumot mavjud.') }}</p>
+                    <p>{{ __('O‘zingizga mos taklifni tanlang yoki savollaringiz bo‘lsa, biz bilan bog‘laning.') }}</p>
+
+                    <a href="{{ route('posts.index') }}" class="custom-btn btn mt-3">{{ __('Postlarni ko‘rish') }}</a>
                 </div>
 
                 <div class="col-lg-6 col-12 custom-block-wrap">
-                    <img src="images/male-wearing-apron-female-white-t-shirt-smiling-broadly-being-glad-clean.png" class="img-fluid">
+                    <img src="{{ asset('images/male-wearing-apron-female-white-t-shirt-smiling-broadly-being-glad-clean.png') }}" class="img-fluid" alt="{{ __('Xizmatlar platformasi') }}">
 
                     <div class="custom-block d-flex flex-column">
-                        <h6 class="text-white mb-3">Need Help? <br> Please call us:</h6>
+                        <h6 class="text-white mb-3">{{ __('Savollaringiz bormi?') }} <br> {{ __('Biz bilan bog‘laning:') }}</h6>
 
                         <p class="d-flex mb-0">
-                            <i class="bi-telephone-fill custom-icon me-2"></i>
+                            <i class="bi-envelope-fill custom-icon me-2"></i>
 
-                            <a href="tel: 110-220-9800">
-                                110-220-9800
+                            <a href="{{ route('contact') }}">
+                                {{ __('Kontakt sahifasi') }}
                             </a>
                         </p>
                     </div>
@@ -83,435 +87,152 @@
         <div class="container">
             <div class="row">
 
-                <div class="col-lg-12 col-12">
-                    <h2 class="mb-4">Our best offers</h2>
+                <div class="col-lg-12 col-12 d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+                    <h2 class="mb-0">{{ __('Eng yaxshi takliflar') }}</h2>
+                    <a href="{{ route('posts.index') }}" class="btn btn-outline-dark btn-sm">{{ __('Barcha postlar') }}</a>
                 </div>
 
-                <div class="col-lg-6 col-12">
-                    <div class="services-thumb">
-                        <div class="row">
-                            <div class="col-lg-5 col-md-5 col-12">
-                                <div class="services-image-wrap">
-                                    <a href="services-detail.html">
-                                        <img src="images/services/people-taking-care-office-cleaning.jpg" class="services-image img-fluid" alt="">
-                                        <img src="images/services/person-taking-care-office.jpg" class="services-image services-image-hover img-fluid" alt="">
+                @forelse($posts as $post)
+                    <div class="col-lg-6 col-12">
+                        <div class="services-thumb {{ $loop->iteration > 2 ? 'mb-lg-0' : '' }}">
+                            <div class="row">
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <div class="services-image-wrap">
+                                        <a href="{{ route('posts.show', $post) }}">
+                                            <img src="{{ $post->image_url }}"
+                                                 class="services-image img-fluid"
+                                                 alt="{{ $post->title }}" loading="lazy">
 
-                                        <div class="services-icon-wrap">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <p class="text-white mb-0">
-                                                    <i class="bi-cash me-2"></i>
-                                                    $820
-                                                </p>
+                                            <img src="{{ $post->hover_image_url }}"
+                                                 class="services-image services-image-hover img-fluid"
+                                                 alt="{{ $post->title }}" loading="lazy">
 
-                                                <p class="text-white mb-0">
-                                                    <i class="bi-clock-fill me-2"></i>
-                                                    5 hrs
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+                                            <div class="services-icon-wrap">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <p class="text-white mb-0">
+                                                        <i class="bi-cash me-2"></i>
+                                                        {{ number_format((float) $post->price, 0, ',', ' ') }} so‘m
+                                                    </p>
 
-                            <div class="col-lg-7 col-md-7 col-12 d-flex align-items-center">
-                                <div class="services-info mt-4 mt-lg-0 mt-md-0">
-                                    <h4 class="services-title mb-1 mb-lg-2">
-                                        <a class="services-title-link" href="services-detail.html">Office Cleaning</a>
-                                    </h4>
-
-                                    <p>Best Cleaning Service Provider Ipsum dolor sit consectetur kengan</p>
-
-                                    <div class="d-flex flex-wrap align-items-center">
-                                        <div class="reviews-icons">
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star"></i>
-                                            <i class="bi-star"></i>
-                                        </div>
-
-                                        <a href="services-detail.html" class="custom-btn btn button button--atlas mt-2 ms-auto">
-                                            <span>Learn More</span>
-
-                                            <div class="marquee" aria-hidden="true">
-                                                <div class="marquee__inner">
-                                                    <span>Learn More</span>
-                                                    <span>Learn More</span>
-                                                    <span>Learn More</span>
-                                                    <span>Learn More</span>
+                                                    <p class="text-white mb-0">
+                                                        <i class="bi-clock-fill me-2"></i>
+                                                        {{ $post->duration ? $post->duration.' '.__('soat') : '—' }}
+                                                    </p>
                                                 </div>
                                             </div>
                                         </a>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="col-lg-6 col-12">
-                    <div class="services-thumb">
-                        <div class="row">
-                            <div class="col-lg-5 col-md-5 col-12">
-                                <div class="services-image-wrap">
-                                    <a href="services-detail.html">
-                                        <img src="images/services/young-smiling-woman-wearing-rubber-gloves-cleaning-stove.jpg" class="services-image img-fluid" alt="">
-                                        <img src="images/services/woman-holding-rag-detergent-cleaning-cooker.jpg" class="services-image services-image-hover img-fluid" alt="">
+                                <div class="col-lg-7 col-md-7 col-12 d-flex align-items-center">
+                                    <div class="services-info mt-4 mt-lg-0 mt-md-0">
+                                        <h4 class="services-title mb-1 mb-lg-2">
+                                            <a class="services-title-link"
+                                               href="{{ route('posts.show', $post) }}">{{ $post->title }}</a>
+                                        </h4>
 
-                                        <div class="services-icon-wrap">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <p class="text-white mb-0">
-                                                    <i class="bi-cash me-2"></i>
-                                                    $640
-                                                </p>
+                                        <p>{{ \Illuminate\Support\Str::limit($post->short_content, 140) }}</p>
 
-                                                <p class="text-white mb-0">
-                                                    <i class="bi-clock-fill me-2"></i>
-                                                    4 hrs
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+                                        <div class="d-flex flex-wrap align-items-center gap-2">
+                                            @if($post->category)
+                                                <span class="badge bg-dark">{{ $post->category->name }}</span>
+                                            @endif
 
-                            <div class="col-lg-7 col-md-7 col-12 d-flex align-items-center">
-                                <div class="services-info mt-4 mt-lg-0 mt-md-0">
-                                    <h4 class="services-title mb-1 mb-lg-2">
-                                        <a class="services-title-link" href="services-detail.html">Kitchen Cleaning</a>
-                                    </h4>
+                                            <a href="{{ route('posts.show', $post) }}"
+                                               class="custom-btn btn button button--atlas mt-2 ms-auto">
+                                                <span>{{ __('Batafsil') }}</span>
 
-                                    <p>Best Cleaning Service Provider Ipsum dolor sit consectetur kengan</p>
-
-                                    <div class="d-flex flex-wrap align-items-center">
-                                        <div class="reviews-icons">
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star-fill"></i>
-                                        </div>
-
-                                        <a href="services-detail.html" class="custom-btn btn button button--atlas mt-2 ms-auto">
-                                            <span>Learn More</span>
-
-                                            <div class="marquee" aria-hidden="true">
-                                                <div class="marquee__inner">
-                                                    <span>Learn More</span>
-                                                    <span>Learn More</span>
-                                                    <span>Learn More</span>
-                                                    <span>Learn More</span>
+                                                <div class="marquee" aria-hidden="true">
+                                                    <div class="marquee__inner">
+                                                        <span>{{ __('Batafsil') }}</span>
+                                                        <span>{{ __('Batafsil') }}</span>
+                                                        <span>{{ __('Batafsil') }}</span>
+                                                        <span>{{ __('Batafsil') }}</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </a>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-lg-6 col-12">
-                    <div class="services-thumb mb-lg-0">
-                        <div class="row">
-                            <div class="col-lg-5 col-md-5 col-12">
-                                <div class="services-image-wrap">
-                                    <a href="services-detail.html">
-                                        <img src="images/services/man-polishing-car-inside-car-service.jpg" class="services-image img-fluid" alt="">
-                                        <img src="images/services/man-polishing-car-inside.jpg" class="services-image services-image-hover img-fluid" alt="">
-
-                                        <div class="services-icon-wrap">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <p class="text-white mb-0">
-                                                    <i class="bi-cash me-2"></i>
-                                                    $240
-                                                </p>
-
-                                                <p class="text-white mb-0">
-                                                    <i class="bi-clock-fill me-2"></i>
-                                                    2 hrs
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-7 col-md-7 col-12 d-flex align-items-center">
-                                <div class="services-info mt-4 mt-lg-0 mt-md-0">
-                                    <h4 class="services-title mb-1 mb-lg-2">
-                                        <a class="services-title-link" href="services-detail.html">Car Washing</a>
-                                    </h4>
-
-                                    <p>Best Cleaning Service Provider Ipsum dolor sit consectetur kengan</p>
-
-                                    <div class="d-flex flex-wrap align-items-center">
-                                        <div class="reviews-icons">
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star-fill"></i>
-                                        </div>
-
-                                        <a href="services-detail.html" class="custom-btn btn button button--atlas mt-2 ms-auto">
-                                            <span>Learn More</span>
-
-                                            <div class="marquee" aria-hidden="true">
-                                                <div class="marquee__inner">
-                                                    <span>Learn More</span>
-                                                    <span>Learn More</span>
-                                                    <span>Learn More</span>
-                                                    <span>Learn More</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                @empty
+                    <div class="col-12">
+                        <div class="alert alert-info mb-0">
+                            {{ __('Hozircha postlar yo‘q.') }}
+                            @can('create', \App\Models\Post::class)
+                                <a href="{{ route('posts.create') }}">{{ __('Birinchi postni yarating') }}</a>.
+                            @endcan
                         </div>
                     </div>
-                </div>
-
-                <div class="col-lg-6 col-12">
-                    <div class="services-thumb mb-lg-0">
-                        <div class="row">
-                            <div class="col-lg-5 col-md-5 col-12">
-                                <div class="services-image-wrap">
-                                    <a href="services-detail.html">
-                                        <img src="images/services/professional-industrial-cleaner-protective-uniform-cleaning-floor-food-processing-plant.jpg" class="services-image img-fluid" alt="">
-                                        <img src="images/services/close-up-mop-cleaning-industrial-plant-floor.jpg" class="services-image services-image-hover img-fluid" alt="">
-
-                                        <div class="services-icon-wrap">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <p class="text-white mb-0">
-                                                    <i class="bi-cash me-2"></i>
-                                                    $6,800
-                                                </p>
-
-                                                <p class="text-white mb-0">
-                                                    <i class="bi-clock-fill me-2"></i>
-                                                    30 hrs
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-7 col-md-7 col-12 d-flex align-items-center">
-                                <div class="services-info mt-4 mt-lg-0 mt-md-0">
-                                    <h4 class="services-title mb-1 mb-lg-2">
-                                        <a class="services-title-link" href="services-detail.html">Factory Cleaning</a>
-                                    </h4>
-
-                                    <p>Best Cleaning Service Provider Ipsum dolor sit consectetur kengan</p>
-
-                                    <div class="d-flex flex-wrap align-items-center">
-                                        <div class="reviews-icons">
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star-fill"></i>
-                                            <i class="bi-star"></i>
-                                        </div>
-
-                                        <a href="services-detail.html" class="custom-btn btn button button--atlas mt-2 ms-auto">
-                                            <span>Learn More</span>
-
-                                            <div class="marquee" aria-hidden="true">
-                                                <div class="marquee__inner">
-                                                    <span>Learn More</span>
-                                                    <span>Learn More</span>
-                                                    <span>Learn More</span>
-                                                    <span>Learn More</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endforelse
 
             </div>
         </div>
     </section>
 
 
-    <section class="testimonial-section section-padding section-bg">
-        <div class="section-overlay"></div>
+    @if ($testimonials->isNotEmpty())
+        <section class="testimonial-section section-padding section-bg">
+            <div class="section-overlay"></div>
 
-        <div class="container">
-            <div class="row">
+            <div class="container">
+                <div class="row">
 
-                <div class="col-lg-12 col-12 text-center">
-                    <h2 class="text-white mb-4">Happy Customers</h2>
+                    <div class="col-lg-12 col-12 text-center">
+                        <h2 class="text-white mb-4">{{ __('Foydalanuvchilar fikrlari') }}</h2>
+                    </div>
+
+                    @foreach ($testimonials as $comment)
+                        <div class="col-lg-4 col-12 mb-4">
+                            <div class="featured-block h-100 mb-0">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="bi-person-circle text-white fs-1"></i>
+
+                                    <div class="ms-3">
+                                        <h4 class="mb-0">{{ $comment->user?->name ?? __('Foydalanuvchi') }}</h4>
+
+                                        @if ($comment->post)
+                                            <a href="{{ route('posts.show', $comment->post) }}" class="small text-white-50">
+                                                {{ \Illuminate\Support\Str::limit($comment->post->title, 40) }}
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <p class="mb-0">{{ \Illuminate\Support\Str::limit($comment->body, 180) }}</p>
+                            </div>
+                        </div>
+                    @endforeach
+
                 </div>
-
-                <div class="col-lg-4 col-12">
-                    <div class="featured-block">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="images/avatar/happy-customer-01.jpg" class="avatar-image img-fluid">
-
-                            <div class="ms-3">
-                                <h4 class="mb-0">Marie</h4>
-
-                                <div class="reviews-icons mb-1">
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <p class="mb-0">Best Cleaning Service Provider Ipsum dolor sit consectetur kengan</p>
-                    </div>
-
-                    <div class="featured-block mb-lg-0">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="images/avatar/happy-customer-02.jpg" class="avatar-image img-fluid">
-
-                            <div class="ms-3">
-                                <h4 class="mb-0">Nana</h4>
-
-                                <div class="reviews-icons mb-1">
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-12">
-                    <div class="featured-block">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="images/avatar/happy-customer-03.jpg" class="avatar-image img-fluid">
-
-                            <div class="ms-3">
-                                <h4 class="mb-0">Elon</h4>
-
-                                <div class="reviews-icons mb-1">
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p>
-                    </div>
-
-                    <div class="featured-block mb-lg-0">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="images/avatar/happy-customer-04.jpg" class="avatar-image img-fluid">
-
-                            <div class="ms-3">
-                                <h4 class="mb-0">Josh</h4>
-
-                                <div class="reviews-icons mb-1">
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star"></i>
-                                    <i class="bi-star"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</p>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-12">
-                    <div class="featured-block">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="images/avatar/happy-customer-05.jpg" class="avatar-image img-fluid">
-
-                            <div class="ms-3">
-                                <h4 class="mb-0">Katie</h4>
-
-                                <div class="reviews-icons mb-1">
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p>
-                    </div>
-
-                    <div class="featured-block mb-lg-0">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="images/avatar/happy-customer-06.jpg" class="avatar-image img-fluid">
-
-                            <div class="ms-3">
-                                <h4 class="mb-0">Shai</h4>
-
-                                <div class="reviews-icons mb-1">
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star-fill"></i>
-                                    <i class="bi-star"></i>
-                                    <i class="bi-star"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</p>
-                    </div>
-                </div>
-
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
 
-    <section class="partners-section">
-        <div class="container">
-            <div class="row justify-content-center align-items-center">
+    @if ($categories->isNotEmpty())
+        <section class="partners-section">
+            <div class="container">
+                <div class="row justify-content-center align-items-center">
 
-                <div class="col-lg-12 col-12">
-                    <h4 class="partners-section-title bg-white shadow-lg">Trusted by companies</h4>
+                    <div class="col-lg-12 col-12">
+                        <h4 class="partners-section-title bg-white shadow-lg">{{ __('Kategoriyalar') }}</h4>
+                    </div>
+
+                    @foreach ($categories as $category)
+                        <div class="col-lg-3 col-md-4 col-6 mb-3">
+                            <a href="{{ route('posts.index', ['category' => $category->id]) }}" class="btn btn-outline-dark w-100">
+                                {{ $category->name }}
+                            </a>
+                        </div>
+                    @endforeach
+
                 </div>
-
-                <div class="col-lg-2 col-md-4 col-6">
-                    <img src="images/partners/toprak-leasing.svg" class="partners-image img-fluid">
-                </div>
-
-                <div class="col-lg-2 col-md-4 col-6">
-                    <img src="images/partners/glorix.svg" class="partners-image img-fluid">
-                </div>
-
-                <div class="col-lg-2 col-md-4 col-6">
-                    <img src="images/partners/woocommerce.svg" class="partners-image img-fluid">
-                </div>
-
-                <div class="col-lg-2 col-md-4 col-6">
-                    <img src="images/partners/rolf-leasing.svg" class="partners-image img-fluid">
-                </div>
-
-                <div class="col-lg-2 col-md-4 col-6">
-                    <img src="images/partners/unilabs.svg" class="partners-image img-fluid">
-                </div>
-
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 </main>
 
 

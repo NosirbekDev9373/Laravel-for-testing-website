@@ -12,7 +12,9 @@ class PostCreatedNotification extends Notification implements ShouldQueue
     use Queueable;
 
     public string $postTitle;
+
     public int $postId;
+
     public function __construct(string $postTitle, int $postId)
     {
         $this->postTitle = $postTitle;
@@ -28,9 +30,9 @@ class PostCreatedNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('Post muvaffaqiyatli yaratildi!')
-            ->greeting('Salom, ' . $notifiable->name . '!')
-            ->line('"' . $this->postTitle . '" nomli post yaratildi.')
-            ->action('Postni ko\'rish', url('/posts/' . $this->postId))
+            ->greeting('Salom, '.$notifiable->name.'!')
+            ->line('"'.$this->postTitle.'" nomli post yaratildi.')
+            ->action('Postni ko\'rish', url('/posts/'.$this->postId))
             ->line('Rahmat!');
     }
 
@@ -38,8 +40,8 @@ class PostCreatedNotification extends Notification implements ShouldQueue
     {
         return [
             'post_title' => $this->postTitle,
-            'post_id'    => $this->postId,
-            'message'    => '"' . $this->postTitle . '" nomli post yaratildi.',
+            'post_id' => $this->postId,
+            'message' => '"'.$this->postTitle.'" nomli post yaratildi.',
         ];
     }
 }

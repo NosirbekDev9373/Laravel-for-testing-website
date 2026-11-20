@@ -27,12 +27,12 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <p class="text-white mb-0">
                                         <i class="bi-cash me-2"></i>
-                                        ${{ $post->price }}
+                                        {{ number_format((float) $post->price, 0, ',', ' ') }} so‘m
                                     </p>
 
                                     <p class="text-white mb-0">
                                         <i class="bi-clock-fill me-2"></i>
-                                        {{ $post->duration }} hrs
+                                        {{ $post->duration }} {{ __('soat') }}
                                     </p>
                                 </div>
                             </div>
@@ -44,12 +44,12 @@
                             {{-- Kategoriya --}}
                             @if($post->category)
                                 <span class="badge bg-dark mb-3">
-                                    <i class="bi-tag me-1"></i>Kategoriya: {{ $post->category->name }}
+                                    <i class="bi-tag me-1"></i>{{ __('Kategoriya') }}: {{ $post->category->name }}
                                 </span>
                             @endif
                             @if($post->user)
                                 <span class="badge bg-dark mb-3">
-                                    <i class="bi-tag me-1"></i>Post yaratuvchi: {{ $post->user->name }}
+                                    <i class="bi-tag me-1"></i>{{ __('Post yaratuvchi') }}: {{ $post->user->name }}
                                 </span>
                             @endif
                             {{-- Teglar --}}
@@ -81,14 +81,14 @@
                     <div class="row">
 
                         <div class="col-lg-12 col-12">
-                            <h2 class="mb-4">Photo gallery</h2>
+                            <h2 class="mb-4">{{ __('Galereya') }}</h2>
                         </div>
 
                         @foreach($post->gallery_images as $img)
-                            <div class="col-lg-4 col-md-4 col-12">
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
                                 <a href="{{ asset('storage/'.$img) }}" class="image-popup">
                                     <img src="{{ asset('storage/'.$img) }}"
-                                         class="gallery-image img-fluid" alt="{{ $post->title }}"
+                                         class="gallery-image img-fluid" alt="{{ $post->title }} — {{ __('galereya') }} {{ $loop->iteration }}"
                                          loading="lazy">
                                 </a>
                             </div>
@@ -104,14 +104,14 @@
                 <div class="row">
 
                     <div class="col-lg-8 col-12">
-                        <h3 class="mb-4">{{ $post->comments_count }} Izohlar</h3>
+                        <h3 class="mb-4">{{ $post->comments_count }} {{ __('Izohlar') }}</h3>
 
                         {{-- Izohlar ro'yxati --}}
                         @forelse($comments as $comment)
                             <div class="bg-white shadow-sm p-4 mb-3 rounded">
                                 <div class="d-flex align-items-center mb-2">
                                     <i class="bi-person-circle me-2 fs-4"></i>
-                                    <strong>{{ $comment->user?->name ?? 'Foydalanuvchi' }}</strong>
+                                    <strong>{{ $comment->user?->name ?? __('Foydalanuvchi') }}</strong>
                                     <span class="text-muted ms-auto small">
                                 {{ $comment->created_at->diffForHumans() }}
                             </span>
@@ -119,7 +119,7 @@
                                 <p class="mb-0">{!! nl2br(e($comment->body)) !!}</p>
                             </div>
                         @empty
-                            <p class="text-muted">Hali izoh yo'q. Birinchi bo'ling!</p>
+                            <p class="text-muted">{{ __("Hali izoh yo'q. Birinchi bo'ling!") }}</p>
                         @endforelse
 
                         @if($comments->hasPages())
@@ -129,26 +129,26 @@
                         {{-- Izoh yozish formasi --}}
                         <div class="mt-5">
                             @auth
-                                <h5 class="mb-3">Izoh qoldiring</h5>
+                                <h5 class="mb-3">{{ __('Izoh qoldiring') }}</h5>
                                 <form action="{{ route('comments.store') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="post_id" value="{{ $post->id }}">
                                     <div class="mb-3">
                                 <textarea name="body" rows="4" class="form-control"
-                                          placeholder="Izohingizni yozing..." maxlength="2000"
+                                          placeholder="{{ __('Izohingizni yozing...') }}" maxlength="2000"
                                           required>{{ old('body') }}</textarea>
                                         @error('body')
                                         <div class="alert alert-danger mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <button type="submit" class="custom-btn btn">Yuborish</button>
+                                    <button type="submit" class="custom-btn btn">{{ __('Yuborish') }}</button>
                                 </form>
                             @else
                                 <div class="alert alert-info">
-                                    Izoh qoldirish uchun
-                                    <a href="{{ route('login') }}">kiring</a>
-                                    yoki
-                                    <a href="{{ route('register') }}">ro'yxatdan o'ting</a>.
+                                    {{ __('Izoh qoldirish uchun') }}
+                                    <a href="{{ route('login') }}">{{ __('kiring') }}</a>
+                                    {{ __('yoki') }}
+                                    <a href="{{ route('register') }}">{{ __("ro'yxatdan o'ting") }}</a>.
                                 </div>
                             @endauth
                         </div>
@@ -164,7 +164,7 @@
                 <div class="row">
 
                     <div class="col-lg-12 col-12">
-                        <h2 class="mb-4">Related Services</h2>
+                        <h2 class="mb-4">{{ __('Related Services') }}</h2>
                     </div>
                     @foreach($related_services as $related)
                         <div class="col-lg-6 col-12">
@@ -185,12 +185,12 @@
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <p class="text-white mb-0">
                                                             <i class="bi-cash me-2"></i>
-                                                            $ {{ $related->price }}
+                                                            {{ number_format((float) $related->price, 0, ',', ' ') }} so‘m
                                                         </p>
 
                                                         <p class="text-white mb-0">
                                                             <i class="bi-clock-fill me-2"></i>
-                                                            {{ $related->duration }} hrs
+                                                            {{ $related->duration }} {{ __('soat') }}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -218,14 +218,14 @@
 
                                                 <a href="{{ route('posts.show', ['post' => $related->id]) }}"
                                                    class="custom-btn btn button button--atlas mt-2 ms-auto">
-                                                    <span>O'qish</span>
+                                                    <span>{{ __("O'qish") }}</span>
 
                                                     <div class="marquee" aria-hidden="true">
                                                         <div class="marquee__inner">
-                                                            <span>Batafsil ma'lumot</span>
-                                                            <span>Batafsil ma'lumot</span>
-                                                            <span>Batafsil ma'lumot</span>
-                                                            <span>Batafsil ma'lumot</span>
+                                                            <span>{{ __("Batafsil ma'lumot") }}</span>
+                                                            <span>{{ __("Batafsil ma'lumot") }}</span>
+                                                            <span>{{ __("Batafsil ma'lumot") }}</span>
+                                                            <span>{{ __("Batafsil ma'lumot") }}</span>
                                                         </div>
                                                     </div>
                                                 </a>
@@ -248,7 +248,7 @@
                 <div class="row justify-content-center align-items-center">
 
                     <div class="col-lg-12 col-12">
-                        <h4 class="partners-section-title bg-white shadow-lg">Trusted by companies</h4>
+                        <h4 class="partners-section-title bg-white shadow-lg">{{ __('Trusted by companies') }}</h4>
                     </div>
 
                     <div class="col-lg-2 col-md-4 col-6">

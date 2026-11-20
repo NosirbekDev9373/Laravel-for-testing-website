@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? 'Admin panel' }} | Clean Work</title>
+    <title>{{ $title ?? 'Admin panel' }} | Tozalash Web Sayt</title>
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/bootstrap-icons.css') }}" rel="stylesheet">
     <style>
@@ -21,14 +21,21 @@
 <div class="container-fluid">
     <div class="row">
         <aside class="col-md-3 col-lg-2 admin-sidebar p-3">
-            <div class="admin-brand"><i class="bi bi-speedometer2 me-2"></i>Clean Work Admin</div>
+            <div class="admin-brand"><i class="bi bi-speedometer2 me-2"></i>Tozalash Admin</div>
             <nav>
                 <a href="{{ route('admin.dashboard') }}"><i class="bi bi-grid me-2"></i>Dashboard</a>
                 <a href="{{ route('admin.posts.index') }}"><i class="bi bi-file-earmark-text me-2"></i>Postlar</a>
-                <a href="{{ route('admin.categories.index') }}"><i class="bi bi-folder me-2"></i>Kategoriyalar</a>
-                <a href="{{ route('admin.tags.index') }}"><i class="bi bi-tags me-2"></i>Teglar</a>
-                <a href="{{ route('admin.comments.index') }}"><i class="bi bi-chat-left-text me-2"></i>Izohlar</a>
-                <a href="{{ route('admin.users.index') }}"><i class="bi bi-people me-2"></i>Foydalanuvchilar</a>
+                @if(auth()->user()->hasRole('admin'))
+                    @php($unreadContacts = \App\Models\ContactMessage::whereNull('read_at')->count())
+                    <a href="{{ route('admin.contacts.index') }}">
+                        <i class="bi bi-envelope me-2"></i>Xabarlar
+                        @if($unreadContacts > 0)<span class="badge bg-light text-dark ms-1">{{ $unreadContacts }}</span>@endif
+                    </a>
+                    <a href="{{ route('admin.categories.index') }}"><i class="bi bi-folder me-2"></i>Kategoriyalar</a>
+                    <a href="{{ route('admin.tags.index') }}"><i class="bi bi-tags me-2"></i>Teglar</a>
+                    <a href="{{ route('admin.comments.index') }}"><i class="bi bi-chat-left-text me-2"></i>Izohlar</a>
+                    <a href="{{ route('admin.users.index') }}"><i class="bi bi-people me-2"></i>Foydalanuvchilar</a>
+                @endif
                 <hr class="border-secondary">
                 <a href="{{ route('main') }}"><i class="bi bi-box-arrow-up-right me-2"></i>Saytni ko‘rish</a>
                 <form action="{{ route('logout') }}" method="POST" class="px-2 mt-3">
@@ -45,7 +52,7 @@
                 </div>
                 <div class="text-end">
                     <div class="fw-semibold">{{ auth()->user()->name }}</div>
-                    <span class="badge text-bg-danger">Administrator</span>
+                    <span class="badge bg-light text-dark">{{ auth()->user()->roles->pluck('name')->map(fn ($role) => ucfirst($role))->join(', ') }}</span>
                 </div>
             </div>
 
@@ -66,6 +73,6 @@
         </main>
     </div>
 </div>
-<script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
 </body>
 </html>

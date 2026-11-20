@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use App\Models\Post;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -12,8 +11,7 @@ class PostDeletedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public Post $post)
-    {}
+    public function __construct(public string $postTitle) {}
 
     /**
      * Get the notification's delivery channels.
@@ -32,8 +30,8 @@ class PostDeletedNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('Postingiz o\'chirildi')
-            ->greeting('Salom, ' . $notifiable->name . '!')
-            ->line('Sizning "' . $this->post->title . '" nomli postingiz o\'chirildi.')
+            ->greeting('Salom, '.$notifiable->name.'!')
+            ->line('Sizning "'.$this->postTitle.'" nomli postingiz o\'chirildi.')
             ->line('Agar bu xato bo\'lsa, biz bilan bog\'laning.')
             ->action('Saytga o\'tish', url('/'))
             ->line('Rahmat!');
@@ -47,8 +45,8 @@ class PostDeletedNotification extends Notification implements ShouldQueue
     public function toDatabase(object $notifiable): array
     {
         return [
-            'post_title' => $this->post->title,
-            'message'    => '"' . $this->post->title . '" postingiz o\'chirildi.',
+            'post_title' => $this->postTitle,
+            'message' => '"'.$this->postTitle.'" postingiz o\'chirildi.',
         ];
     }
 }

@@ -218,6 +218,127 @@ tozalash-web-sayt/
 └── README.md
 ```
 
+## Demo kontent (namuna postlar)
+
+Bazani toza demo kontent bilan to‘ldirish:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+Bu buyruq 14 ta kategoriya, 21 ta teg, 16 ta batafsil xizmat posti (rasm va galereya bilan) va 15 ta mijoz fikrini yaratadi. Postlarda xizmat tavsifi, so‘mdagi narx, davomiylik va bosqichma-bosqich ish jarayoni bor.
+
+Demo foydalanuvchilar (`SEED_DEFAULT_PASSWORD` orqali parol o‘zgartiriladi, default: `Demo@12345`):
+
+| Email | Rol |
+|---|---|
+| admin@tozalash.uz | admin |
+| sardor@tozalash.uz | editor |
+| dilnoza@tozalash.uz | blogger |
+| javohir@tozalash.uz | blogger |
+| aziza@tozalash.uz | user (mijoz) |
+
+> Productionda demo foydalanuvchilar va parollarni o‘zgartiring yoki `UserSeeder`ni ishlatmang.
+
+## Productionga chiqarish
+
+1. `.env` faylini sozlang:
+
+```env
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://your-domain.com
+
+APP_LOCALE=uz
+APP_FALLBACK_LOCALE=en
+
+SESSION_DRIVER=database
+SESSION_SECURE_COOKIE=true
+
+QUEUE_CONNECTION=database
+CACHE_STORE=database
+
+MAIL_MAILER=smtp
+MAIL_HOST=...
+MAIL_PORT=587
+MAIL_USERNAME=...
+MAIL_PASSWORD=...
+MAIL_FROM_ADDRESS=...
+CONTACT_EMAIL=...
+
+# Nginx/Cloudflare orqasida bo‘lsa:
+TRUSTED_PROXIES=127.0.0.1
+```
+
+2. Paketlar va kalit:
+
+```bash
+composer install --no-dev --optimize-autoloader
+php artisan key:generate
+```
+
+3. Baza va fayl havolasi:
+
+```bash
+php artisan migrate --force
+php artisan storage:link
+```
+
+4. Kesh:
+
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+5. Frontend (agar Vite assetlari ishlatilsa):
+
+```bash
+npm ci
+npm run build
+```
+
+6. Navbat (queue) ishchisi. Kontakt xabarlari va bildirishnomalar navbat orqali yuboriladi, shuning uchun worker doim ishlashi shart:
+
+```bash
+php artisan queue:work --tries=3 --timeout=90
+```
+
+Supervisor konfiguratsiyasi:
+
+```ini
+[program:ishplatforma-worker]
+command=/usr/bin/php /var/www/ishplatforma/artisan queue:work --tries=3 --timeout=90
+directory=/var/www/ishplatforma
+autostart=true
+autorestart=true
+numprocs=1
+user=www-data
+redirect_stderr=true
+stdout_logfile=/var/www/ishplatforma/storage/logs/worker.log
+```
+
+7. Cron (scheduler):
+
+```cron
+* * * * * cd /var/www/ishplatforma && php artisan schedule:run >> /dev/null 2>&1
+```
+
+8. HTTPS, `SESSION_SECURE_COOKIE=true` va to‘g‘ri `TRUSTED_PROXIES` bilan ishlating.
+
+9. `.env` o‘zgarganda keshni yangilang:
+
+```bash
+php artisan optimize:clear
+php artisan config:cache
+```
+
 ## Xavfsizlik
 
-- Production muhitida `APP_DEBUG=false` bo‘lishi kerak.
+- `APP_DEBUG=false` — productionda majburiy.
+- `composer audit` ni muntazam yugurtiring; `composer update` bilan xavfsizlik yangilanishlarini oling.
+- Demo seeder parolini (`SEED_DEFAULT_PASSWORD`) productionda o‘zgartiring.
+- `storage/` va `bootstrap/cache/` papkalariga yozish huquqi faqat web server foydalanuvchisiga berilsin.
+- Login, registratsiya va kontakt formasi rate-limit bilan himoyalangan; CSRF va XSS himoyasi mavjud.
+- `TRUSTED_PROXIES` faqat haqiqiy proxy manzillari bilan to‘ldirilsin.

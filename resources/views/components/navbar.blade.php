@@ -2,7 +2,7 @@
     <div class="container">
         <a class="navbar-brand" href="{{ route('main') }}">
             <img src="{{ asset('images/bubbles.png') }}" class="logo img-fluid" alt="">
-            <span class="ms-2">Clean Work</span>
+            <span class="ms-2">Tozalash Web Sayt</span>
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -30,9 +30,9 @@
                         </a>
                     </li>
 
-                    @if(auth()->user()->hasRole('admin'))
+                    @if(auth()->user()->hasAnyRole(['admin', 'editor', 'blogger']))
                         <li class="nav-item ms-3">
-                            <a class="nav-link custom-btn custom-border-btn custom-btn-bg-white btn" href="{{ route('admin.dashboard') }}">Admin panel</a>
+                            <a class="nav-link custom-btn custom-border-btn custom-btn-bg-white btn" href="{{ route('admin.dashboard') }}">{{ __('Admin panel') }}</a>
                         </li>
                     @endif
 

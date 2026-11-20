@@ -10,24 +10,42 @@
             Blog
         </x-page-header>
 
-        {{-- Category filter --}}
+        {{-- Search and category filter --}}
         <div class="container pt-4">
             <x-alert>
             </x-alert>
-            <div class="d-flex flex-wrap gap-2 mb-4">
-                <a href="{{ route('posts.index') }}"
+
+            <form method="GET" action="{{ route('posts.index') }}" class="row g-2 mb-4">
+                @if($categoryId)
+                    <input type="hidden" name="category" value="{{ $categoryId }}">
+                @endif
+                <div class="col-md-8">
+                    <label for="blog-search" class="form-label">{{ __('Qidiruv') }}</label>
+                    <input id="blog-search" type="search" name="search" value="{{ $search }}" class="form-control" placeholder="{{ __('Sarlavha, mazmun yoki kategoriya bo‘yicha qidirish') }}">
+                </div>
+                <div class="col-md-4 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-dark"><i class="bi bi-search me-1"></i>{{ __('Qidirish') }}</button>
+                    @if($search !== '')
+                        <a href="{{ route('posts.index', array_filter(['category' => $categoryId])) }}" class="btn btn-outline-dark">{{ __('Tozalash') }}</a>
+                    @endif
+                </div>
+            </form>
+
+            <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+                <a href="{{ route('posts.index', array_filter(['search' => $search])) }}"
                    class="btn btn-sm {{ !$categoryId ? 'btn-dark' : 'btn-outline-dark' }}">
-                    Barchasi
+                    {{ __('Barchasi') }}
                 </a>
                 @foreach($categories as $category)
-                    <a href="{{ route('posts.index', ['category' => $category->id]) }}"
+                    <a href="{{ route('posts.index', array_filter(['category' => $category->id, 'search' => $search])) }}"
                        class="btn btn-sm {{ $categoryId === $category->id ? 'btn-dark' : 'btn-outline-dark' }}">
                         {{ $category->name }}
                     </a>
                 @endforeach
+                <span class="text-secondary small ms-auto">{{ $posts->total() }} {{ __('ta post') }}</span>
             </div>
         </div>
-        {{-- End Category filter --}}
+        {{-- End Search and category filter --}}
 
         {{--Servis--}}
         <section class="services-detail-section section-padding">
@@ -51,12 +69,12 @@
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <p class="text-white mb-0">
                                                             <i class="bi-cash me-2"></i>
-                                                            ${{ $post->price }}
+                                                            {{ number_format((float) $post->price, 0, ',', ' ') }} so‘m
                                                         </p>
 
                                                         <p class="text-white mb-0">
                                                             <i class="bi-clock-fill me-2"></i>
-                                                            {{ $post->duration }} hrs
+                                                            {{ $post->duration }} {{ __('soat') }}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -83,14 +101,14 @@
                                                 </div>
                                                     <a href="{{ route('posts.show', ['post' => $post->id]) }}"
                                                        class="custom-btn btn button button--atlas mt-2 ms-auto">
-                                                        <span>O'qish</span>
+                                                        <span>{{ __("O'qish") }}</span>
 
                                                         <div class="marquee" aria-hidden="true">
                                                             <div class="marquee__inner">
-                                                                <span>Batafsil ma'lumot</span>
-                                                                <span>Batafsil ma'lumot</span>
-                                                                <span>Batafsil ma'lumot</span>
-                                                                <span>Batafsil ma'lumot</span>
+                                                                <span>{{ __("Batafsil ma'lumot") }}</span>
+                                                                <span>{{ __("Batafsil ma'lumot") }}</span>
+                                                                <span>{{ __("Batafsil ma'lumot") }}</span>
+                                                                <span>{{ __("Batafsil ma'lumot") }}</span>
                                                             </div>
                                                         </div>
                                                     </a>
@@ -102,7 +120,7 @@
                         </div>
                     @empty
                         <div class="col-12">
-                            <div class="alert alert-info">Hozircha postlar yo‘q.</div>
+                            <div class="alert alert-info">{{ $search !== '' ? __('Qidiruv bo‘yicha post topilmadi.') : __('Hozircha postlar yo‘q.') }}</div>
                         </div>
                     @endforelse
 
@@ -119,7 +137,7 @@
                 <div class="row justify-content-center align-items-center">
 
                     <div class="col-lg-12 col-12">
-                        <h4 class="partners-section-title bg-white shadow-lg">Trusted by companies</h4>
+                        <h4 class="partners-section-title bg-white shadow-lg">{{ __('Trusted by companies') }}</h4>
                     </div>
 
                     <div class="col-lg-2 col-md-4 col-6">

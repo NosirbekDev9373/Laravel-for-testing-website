@@ -4,8 +4,6 @@ namespace App\Policies;
 
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
-use App\Providers\AppServiceProvider;
 
 class PostPolicy
 {
@@ -14,19 +12,19 @@ class PostPolicy
         if ($user->hasRole('admin')) {
             return true;
         }
+
         return null;
     }
 
-
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole('editor') || $user->hasRole('blogger');
     }
-
 
     public function view(User $user, Post $post): bool
     {
-        return false;
+        return $user->hasRole('editor')
+            || ($user->hasRole('blogger') && $user->id === $post->user_id);
     }
 
     /**
@@ -56,23 +54,23 @@ class PostPolicy
         return false;
     }
 
-
     public function delete(User $user, Post $post): bool
     {
-        // Editor va Blogger faqat o'zining postini o'chira oladi
-        if ($user->hasRole('editor') || $user->hasRole('blogger')) {
+        if ($user->hasRole('editor')) {
+            return true;
+        }
+
+        if ($user->hasRole('blogger')) {
             return $user->id === $post->user_id;
         }
 
         return false;
     }
 
-
     public function restore(User $user, Post $post): bool
     {
         return false;
     }
-
 
     public function forceDelete(User $user, Post $post): bool
     {

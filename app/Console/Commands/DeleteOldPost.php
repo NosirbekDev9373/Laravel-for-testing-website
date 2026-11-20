@@ -4,12 +4,13 @@ namespace App\Console\Commands;
 
 use App\Models\Post;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class DeleteOldPost extends Command
 {
     protected $signature = 'posts:delete-one';
+
     protected $description = 'Har daqiqada eng eski 1 postni o\'chiradi';
 
     public function handle()
@@ -17,8 +18,9 @@ class DeleteOldPost extends Command
         // Eng eski postni olish uchun oldest() ishlatamiz (latest() eng yangisini oladi)
         $post = Post::oldest()->first();
 
-        if (!$post) {
+        if (! $post) {
             $this->info('O\'chiriladigan post yoq');
+
             return;
         }
 
