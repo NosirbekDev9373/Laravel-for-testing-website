@@ -2,17 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Models\Category;
 use App\Models\Role;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class TagTest extends TestCase
 {
     use RefreshDatabase;
+
     protected User $user;
 
     protected function setUp(): void
@@ -29,13 +28,13 @@ class TagTest extends TestCase
     public function test_admin_can_create_tag(): void
     {
         $response = $this->actingAs($this->user)
-        ->post(route('admin.tags.store'), [
-            'name' => 'test',
-        ]);
+            ->post(route('admin.tags.store'), [
+                'name' => 'test',
+            ]);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('tags', [
-            'name' => 'test',
+            'name' => 'Test',
         ]);
 
     }
@@ -45,13 +44,14 @@ class TagTest extends TestCase
         Tag::create([
             'name' => 'test',
         ]);
-        //admin teg sahifaga kirish
+        // admin teg sahifaga kirish
         $response = $this->actingAs($this->user)->get(route('admin.tags.index'));
 
         $response->assertOk();
-        //bazada borligini tesshiradi
+        // bazada borligini tesshiradi
         $response->assertSee('test');
     }
+
     public function test_admin_can_delete_tag(): void
     {
         $tag = Tag::create([

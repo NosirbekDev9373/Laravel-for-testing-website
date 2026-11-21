@@ -33,9 +33,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="password" class="visually-hidden">Parol</label>
+                        <label for="password" class="visually-hidden">{{ __('Parol') }}</label>
                         <input type="password" name="password" id="password" class="form-control"
-                               placeholder="Parol" required minlength="8" autocomplete="new-password"
+                               placeholder="{{ __('Parol') }}" required minlength="8" autocomplete="new-password"
                                aria-describedby="password-error"/>
                         @error('password')
                         <div class="alert alert-danger mt-1" id="password-error">{{ $message }}</div>
@@ -43,16 +43,16 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="password_confirmation" class="visually-hidden">Parolni tasdiqlang</label>
+                        <label for="password_confirmation" class="visually-hidden">{{ __('Parolni tasdiqlang') }}</label>
                         <input type="password" name="password_confirmation" id="password_confirmation"
-                               class="form-control" placeholder="Parolni tasdiqlang"
+                               class="form-control" placeholder="{{ __('Parolni tasdiqlang') }}"
                                required minlength="8" autocomplete="new-password"/>
                     </div>
 
                     <button type="submit" class="form-control custom-btn">{{ __("Ro'yxatdan o'tish") }}</button>
 
                     <p class="text-center mt-3">
-                        Akkauntingiz bormi?
+                        {{ __("Akkauntingiz bormi?") }}
                         <a href="{{ route('login') }}">{{ __('Kirish') }}</a>
                     </p>
                 </form>

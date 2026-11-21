@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="{{ __('Tozalash va xizmatlar platformasi') }}">
+    <meta name="author" content="Tozalash Web Sayt">
 
-    <title>{{ $title ?? 'Clean Work HTML CSS Template'}}</title>
+    <title>{{ $title ?? 'Tozalash Web Sayt' }}</title>
 
     <!-- CSS FILES -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,17 +16,13 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
 
-    <link href="/css/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap-icons.css') }}" rel="stylesheet">
 
-    <link href="/css/tooplate-clean-work.css" rel="stylesheet">
+    <link href="{{ asset('css/tooplate-clean-work.css') }}" rel="stylesheet">
 
     {{--@vite(['resources/css/app.css', 'resources/js/app.js'])--}}
-
-    <!--
-    https://www.tooplate.com/view/2132-clean-work
-    -->
 </head>
 
 <body>
@@ -38,19 +34,19 @@
             <div class="col-lg-12 col-12 d-flex flex-wrap">
                 <p class="d-flex me-4 mb-0">
                     <i class="bi-house-fill me-2"></i>
-                    One-Stop Cleaning Service
+                    {{ __('Tozalash va xizmatlar platformasi') }}
                 </p>
 
                 <p class="d-flex d-lg-block d-md-block d-none me-4 mb-0">
-                    <i class="bi-clock-fill me-2"></i>
-                    <strong class="me-2">Mon - Fri</strong> 8:00 AM - 5:30 PM
+                    <i class="bi-globe2 me-2"></i>
+                    {{ __('Onlayn platforma') }}
                 </p>
 
                 <p class="site-header-icon-wrap text-white d-flex mb-0 ms-auto">
-                    <i class="site-header-icon bi-whatsapp me-2"></i>
+                    <i class="site-header-icon bi-envelope-fill me-2"></i>
 
-                    <a href="tel: 110-220-9800" class="text-white">
-                        110 220 9800
+                    <a href="{{ route('contact') }}" class="text-white">
+                        {{ __('Bog‘lanish') }}
                     </a>
                 </p>
             </div>
@@ -70,120 +66,73 @@
 
             <div class="col-lg-12 col-12 d-flex align-items-center mb-4 pb-2">
                 <div>
-                    <img src="{{('images/bubbles.png')}}" class="logo img-fluid" alt="">
+                    <img src="{{ asset('images/bubbles.png') }}" class="logo img-fluid" alt="Tozalash Web Sayt">
                 </div>
 
                 <ul class="footer-menu d-flex flex-wrap ms-5">
-                    <li class="footer-menu-item"><a href="{{ route('about') }}" class="footer-menu-link">About Us</a></li>
+                    <li class="footer-menu-item"><a href="{{ route('about') }}" class="footer-menu-link">{{ __('Biz haqimizda') }}</a></li>
 
-                    <li class="footer-menu-item"><a href="{{ route('posts.index') }}" class="footer-menu-link">Blog</a></li>
+                    <li class="footer-menu-item"><a href="{{ route('posts.index') }}" class="footer-menu-link">{{ __('Postlar') }}</a></li>
 
-                    <li class="footer-menu-item"><a href="{{ route('services') }}" class="footer-menu-link">Services</a></li>
+                    <li class="footer-menu-item"><a href="{{ route('services') }}" class="footer-menu-link">{{ __('Xizmatlar') }}</a></li>
 
-                    <li class="footer-menu-item"><a href="{{ route('contact') }}" class="footer-menu-link">Contact</a></li>
+                    <li class="footer-menu-item"><a href="{{ route('contact') }}" class="footer-menu-link">{{ __('Kontakt') }}</a></li>
                 </ul>
             </div>
 
             <div class="col-lg-5 col-12 mb-4 mb-lg-0">
-                <h5 class="site-footer-title mb-3">Our Services</h5>
+                <h5 class="site-footer-title mb-3">{{ __('Tezkor havolalar') }}</h5>
 
                 <ul class="footer-menu">
                     <li class="footer-menu-item">
-                        <a href="#" class="footer-menu-link">
+                        <a href="{{ route('posts.index') }}" class="footer-menu-link">
                             <i class="bi-chevron-double-right footer-menu-link-icon me-2"></i>
-                            House Cleaning
+                            {{ __('Barcha postlar') }}
                         </a>
                     </li>
 
                     <li class="footer-menu-item">
-                        <a href="#" class="footer-menu-link">
+                        <a href="{{ route('about') }}" class="footer-menu-link">
                             <i class="bi-chevron-double-right footer-menu-link-icon me-2"></i>
-                            Car Washing
+                            {{ __('Platforma haqida') }}
                         </a>
                     </li>
 
                     <li class="footer-menu-item">
-                        <a href="#" class="footer-menu-link">
+                        <a href="{{ route('services') }}" class="footer-menu-link">
                             <i class="bi-chevron-double-right footer-menu-link-icon me-2"></i>
-                            Laundry
+                            {{ __('Xizmatlar') }}
                         </a>
                     </li>
 
                     <li class="footer-menu-item">
-                        <a href="#" class="footer-menu-link">
+                        <a href="{{ route('contact') }}" class="footer-menu-link">
                             <i class="bi-chevron-double-right footer-menu-link-icon me-2"></i>
-                            Office Cleaning
-                        </a>
-                    </li>
-
-                    <li class="footer-menu-item">
-                        <a href="#" class="footer-menu-link">
-                            <i class="bi-chevron-double-right footer-menu-link-icon me-2"></i>
-                            Toilet Cleaning
+                            {{ __('Bog‘lanish') }}
                         </a>
                     </li>
                 </ul>
             </div>
 
             <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0 mb-md-0">
-                <h5 class="site-footer-title mb-3">Office</h5>
+                <h5 class="site-footer-title mb-3">{{ __('Aloqa') }}</h5>
 
-                <p class="text-white d-flex mt-3 mb-2">
-                    <i class="bi-geo-alt-fill me-2"></i>
-                    Akershusstranda 20, 0150 Oslo, Norway
+                <p class="text-white mt-3 mb-2">
+                    {{ __('Savollaringiz bormi? Kontakt sahifasi orqali biz bilan bog‘laning.') }}
                 </p>
 
-                <p class="text-white d-flex mb-2">
-                    <i class="bi-telephone-fill me-2"></i>
-
-                    <a href="tel: 110-220-9800" class="site-footer-link">
-                        110-220-9800
-                    </a>
-                </p>
-
-                <p class="text-white d-flex">
-                    <i class="bi-envelope-fill me-2"></i>
-
-                    <a href="mailto:info@company.com" class="site-footer-link">
-                        info@company.com
-                    </a>
-                </p>
-
-                <ul class="social-icon mt-4">
-                    <li class="social-icon-item">
-                        <a href="#" class="social-icon-link button button--skoll">
-                            <span></span>
-                            <span class="bi-twitter"></span>
-                        </a>
-                    </li>
-
-                    <li class="social-icon-item">
-                        <a href="#" class="social-icon-link button button--skoll">
-                            <span></span>
-                            <span class="bi-facebook"></span>
-                        </a>
-                    </li>
-
-                    <li class="social-icon-item">
-                        <a href="#" class="social-icon-link button button--skoll">
-                            <span></span>
-                            <span class="bi-instagram"></span>
-                        </a>
-                    </li>
-                </ul>
+                <a href="{{ route('contact') }}" class="btn btn-outline-light mt-3">
+                    {{ __('Kontakt sahifasi') }}
+                </a>
             </div>
 
             <div class="col-lg-3 col-md-6 col-6 mt-3 mt-lg-0 mt-md-0">
                 <div class="featured-block">
-                    <h5 class="text-white mb-3">Service Hours</h5>
+                    <h5 class="text-white mb-3">{{ __('Platforma') }}</h5>
 
-                    <strong class="d-block text-white mb-1">Mon - Fri</strong>
+                    <p class="text-white mb-3">{{ __('Turli xizmatlar va foydali postlar bir joyda.') }}</p>
 
-                    <p class="text-white mb-3">8:00 AM - 5:30 PM</p>
-
-                    <strong class="d-block text-white mb-1">Sat</strong>
-
-                    <p class="text-white mb-0">6:00 AM - 2:30 PM</p>
+                    <a href="{{ route('posts.index') }}" class="text-white">{{ __('Postlarni ko‘rish') }}</a>
                 </div>
             </div>
         </div>
@@ -194,12 +143,11 @@
             <div class="row">
 
                 <div class="col-lg-6 col-12">
-                    <p class="copyright-text mb-0">Copyright © 2036 Clean Work Co., Ltd.</p>
+                    <p class="copyright-text mb-0">Copyright © {{ date('Y') }} Tozalash Web Sayt.</p>
                 </div>
 
                 <div class="col-lg-6 col-12 text-end">
-                    <p class="copyright-text mb-0">
-                        // Designed by <a href="https://www.tooplate.com" target="_parent">Tooplate</a> //</p>
+                    <p class="copyright-text mb-0">{{ __('Barcha huquqlar himoyalangan.') }}</p>
                 </div>
 
             </div>
@@ -208,15 +156,42 @@
 </footer>
 
 <!-- JAVASCRIPT FILES -->
-<script src="js/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/jquery.backstretch.min.js"></script>
-<script src="js/counter.js"></script>
-<script src="js/countdown.js"></script>
-<script src="js/init.js"></script>
-<script src="js/modernizr.js"></script>
-<script src="js/animated-headline.js"></script>
-<script src="js/custom.js"></script>
+<script src="{{ asset('js/jquery.min.js') }}"></script>
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('js/jquery.backstretch.min.js') }}"></script>
+<script src="{{ asset('js/counter.js') }}"></script>
+<script src="{{ asset('js/countdown.js') }}"></script>
+<script src="{{ asset('js/init.js') }}"></script>
+<script src="{{ asset('js/modernizr.js') }}"></script>
+<script src="{{ asset('js/animated-headline.js') }}"></script>
+<script src="{{ asset('js/custom.js') }}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('input[data-max-files]').forEach(function (input) {
+        var maxFiles = parseInt(input.dataset.maxFiles, 10);
+
+        if (!maxFiles) {
+            return;
+        }
+
+        input.addEventListener('change', function () {
+            if (input.files.length <= maxFiles) {
+                return;
+            }
+
+            var dataTransfer = new DataTransfer();
+
+            Array.prototype.slice.call(input.files, 0, maxFiles).forEach(function (file) {
+                dataTransfer.items.add(file);
+            });
+
+            input.files = dataTransfer.files;
+            alert('Ko‘pi bilan ' + maxFiles + ' ta rasm yuklash mumkin.');
+        });
+    });
+});
+</script>
 
 </body>
 </html>

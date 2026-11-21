@@ -13,7 +13,7 @@
             <div class="col-lg-4 col-12 d-flex justify-content-lg-end align-items-center ms-auto">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center">
-                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('main') }}">{{ __('Bosh sahifa') }}</a></li>
 
                         <li class="breadcrumb-item active" aria-current="page">{{ $slot }}</li>
                     </ol>

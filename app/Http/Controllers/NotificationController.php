@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class NotificationController extends Controller
 {
     public function index()
@@ -13,13 +11,21 @@ class NotificationController extends Controller
 
     public function read(string $id)
     {
-        auth()->user()->notifications->find($id)->markAsRead();
+        $notification = auth()->user()->notifications()->whereKey($id)->first();
+
+        if (! $notification) {
+            return back()->with('error', __('Bildirishnoma topilmadi.'));
+        }
+
+        $notification->markAsRead();
+
         return back();
     }
 
     public function readAll()
     {
         auth()->user()->unreadNotifications->markAsRead();
+
         return back();
     }
 }

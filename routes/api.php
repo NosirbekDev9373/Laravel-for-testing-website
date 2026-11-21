@@ -11,4 +11,4 @@ Route::get('/user', function (Request $request) {
 /*Route::get('posts', [PostApiController::class, 'index']);
 Route::get('posts/{post}', [PostApiController::class, 'show']);*/
 
-//Route::apiResource('posts', PostApiController::class);
+// Route::apiResource('posts', PostApiController::class);

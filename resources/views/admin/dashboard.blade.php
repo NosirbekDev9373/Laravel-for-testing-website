@@ -1,29 +1,36 @@
 @extends('admin.layout', ['title' => 'Dashboard'])
 
 @section('content')
+@php
+    $stats = [
+        ['Foydalanuvchilar', $usersCount, 'bi-people', 'primary', 'admin.users.index', true],
+        ['Postlar', $postsCount, 'bi-file-earmark-text', 'success', 'admin.posts.index', false],
+        ['Kategoriyalar', $categoriesCount, 'bi-folder', 'warning', 'admin.categories.index', true],
+        ['Teglar', $tagsCount, 'bi-tags', 'info', 'admin.tags.index', true],
+        ['Izohlar', $commentsCount, 'bi-chat-left-text', 'danger', 'admin.comments.index', true],
+        ['O‘qilmagan xabarlar', $unreadContactsCount, 'bi-envelope', 'secondary', 'admin.contacts.index', true],
+    ];
+@endphp
+
 <div class="row g-3 mb-4">
-    @foreach([
-        ['Foydalanuvchilar', $usersCount, 'bi-people', 'primary', 'admin.users.index'],
-        ['Postlar', $postsCount, 'bi-file-earmark-text', 'success', 'admin.posts.index'],
-        ['Kategoriyalar', $categoriesCount, 'bi-folder', 'warning', 'admin.categories.index'],
-        ['Teglar', $tagsCount, 'bi-tags', 'info', 'admin.tags.index'],
-        ['Izohlar', $commentsCount, 'bi-chat-left-text', 'danger', 'admin.comments.index'],
-    ] as [$label, $count, $icon, $color, $route])
-        <div class="col-6 col-xl">
-            <a class="text-decoration-none text-reset" href="{{ route($route) }}">
-                <div class="card stat-card h-100">
-                    <div class="card-body d-flex align-items-center justify-content-between">
-                        <div><div class="text-secondary small">{{ $label }}</div><div class="fs-3 fw-bold">{{ $count }}</div></div>
-                        <span class="rounded-circle bg-{{ $color }}-subtle text-{{ $color }} p-3"><i class="bi {{ $icon }} fs-4"></i></span>
+    @foreach($stats as [$label, $count, $icon, $color, $route, $adminOnly])
+        @if(! $adminOnly || $isAdmin)
+            <div class="col-6 col-md-4 col-xl">
+                <a class="text-decoration-none text-reset" href="{{ route($route) }}">
+                    <div class="card stat-card h-100">
+                        <div class="card-body d-flex align-items-center justify-content-between">
+                            <div><div class="text-secondary small">{{ $label }}</div><div class="fs-3 fw-bold">{{ $count }}</div></div>
+                            <span class="rounded-circle bg-{{ $color }}-subtle text-{{ $color }} p-3"><i class="bi {{ $icon }} fs-4"></i></span>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        @endif
     @endforeach
 </div>
 
 <div class="row g-4">
-    <div class="col-xl-7">
+    <div class="{{ $isAdmin ? 'col-xl-7' : 'col-12' }}">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <strong>Oxirgi postlar</strong>
@@ -48,9 +55,10 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-5">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white"><strong>Yangi foydalanuvchilar</strong></div>
+    @if($isAdmin)
+        <div class="col-xl-5">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white"><strong>Yangi foydalanuvchilar</strong></div>
             <ul class="list-group list-group-flush">
                 @forelse($latestUsers as $user)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -60,8 +68,9 @@
                 @empty
                     <li class="list-group-item text-secondary">Foydalanuvchilar topilmadi.</li>
                 @endforelse
-            </ul>
+                </ul>
+            </div>
         </div>
-    </div>
+    @endif
 </div>
 @endsection

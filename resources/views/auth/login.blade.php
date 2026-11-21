@@ -22,9 +22,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="password" class="visually-hidden">Parol</label>
+                        <label for="password" class="visually-hidden">{{ __('Parol') }}</label>
                         <input type="password" name="password" id="password" class="form-control"
-                               placeholder="Parol" required autocomplete="current-password"
+                               placeholder="{{ __('Parol') }}" required autocomplete="current-password"
                                aria-describedby="password-error"/>
                         @error('password')
                         <div class="alert alert-danger mt-1" id="password-error">{{ $message }}</div>
@@ -34,13 +34,13 @@
                     <div class="mb-4 form-check">
                         <input type="checkbox" name="remember" value="1" class="form-check-input" id="remember"
                                @checked(old('remember'))/>
-                        <label class="form-check-label" for="remember">Meni eslab qol</label>
+                        <label class="form-check-label" for="remember">{{ __('Meni eslab qol') }}</label>
                     </div>
 
                     <button type="submit" class="form-control custom-btn">{{ __('Kirish') }}</button>
 
                     <p class="text-center mt-3">
-                        Akkauntingiz yo'qmi?
+                        {{ __("Akkauntingiz yo'qmi?") }}
                         <a href="{{ route('register') }}">{{ __("Ro'yxatdan o'tish") }}</a>
                     </p>
                 </form>

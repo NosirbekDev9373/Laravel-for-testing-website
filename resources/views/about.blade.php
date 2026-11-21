@@ -1,41 +1,41 @@
 <x-layouts.main>
 
     <x-slot:title>
-        Biz haqimizda
+        {{ __('Biz haqimizda') }}
     </x-slot:title>
 
 <main>
 
     <x-page-header>
-        Biz haqimizda
+        {{ __('Biz haqimizda') }}
     </x-page-header>
 
 
     <section class="section-padding">
         <div class="container">
-            <div class="row">
+            <div class="row align-items-center">
 
                 <div class="col-lg-6 col-12">
-                    <img src="{{ asset('images/cleaning-concept-with-man-showing-business-card.jpg') }}" class="featured-image img-fluid">
+                    <img src="{{ asset('images/cleaning-concept-with-man-showing-business-card.jpg') }}" class="featured-image img-fluid" alt="{{ __('Tozalash va xizmatlar platformasi') }}">
                 </div>
 
                 <div class="col-lg-6 col-12">
                     <div class="featured-block">
-                        <h2 class="mb-4">Cleaning Service Agency Since 2018</h2>
+                        <h2 class="mb-4">{{ __('Tozalash va xizmatlar platformasi') }}</h2>
 
-                        <p>Tooplate website provides a variety of latest HTML templates or Bootstrap 5 Themes for your <a href="#">business websites</a>.</p>
+                        <p>{{ __('Platformamiz foydalanuvchilarga turli xizmatlar haqida foydali postlar topish, ular bilan tanishish va tajriba almashish imkonini beradi.') }}</p>
 
-                        <p>Clean Work is a blue color theme HTML CSS template for your company website. You may use this template for any purpose.</p>
+                        <p>{{ __('Har bir postda narx, davomiylik, kategoriya va batafsil ma’lumot mavjud. Foydalanuvchilar postlar ostida o‘z fikrlarini qoldirishlari mumkin.') }}</p>
 
-                        <a class="custom-btn btn button button--atlas mt-3" href="contact.html">
-                            <span>Get in touch</span>
+                        <a class="custom-btn btn button button--atlas mt-3" href="{{ route('contact') }}">
+                            <span>{{ __('Bog‘lanish') }}</span>
 
                             <div class="marquee" aria-hidden="true">
                                 <div class="marquee__inner">
-                                    <span>Get in touch</span>
-                                    <span>Get in touch</span>
-                                    <span>Get in touch</span>
-                                    <span>Get in touch</span>
+                                    <span>{{ __('Bog‘lanish') }}</span>
+                                    <span>{{ __('Bog‘lanish') }}</span>
+                                    <span>{{ __('Bog‘lanish') }}</span>
+                                    <span>{{ __('Bog‘lanish') }}</span>
                                 </div>
                             </div>
                         </a>
@@ -47,61 +47,39 @@
     </section>
 
 
-    <section class="team-section section-padding section-bg">
-        <div class="container">
-            <div class="row">
+    @if ($authors->isNotEmpty())
+        <section class="team-section section-padding section-bg">
+            <div class="container">
+                <div class="row">
 
-                <div class="col-lg-12 col-12">
-                    <h2 class="mb-4">Meet People</h2>
-                </div>
-
-                <div class="col-lg-3 col-md-6 col-12 mb-lg-0 mb-md-5">
-                    <img src="{{ asset('images/teams/young-cleaning-man-wearing-casual-clothes.jpg') }}" class="team-image img-fluid">
-                </div>
-
-                <div class="col-lg-3 col-md-6 col-12 d-flex justify-content-lg-center mt-4 mt-lg-0 mt-md-0 mb-5 mb-lg-0">
-                    <div class="team-info mx-auto mx-lg-0">
-                        <h4 class="mb-2">Josh</h4>
-
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing tempor incididunt dolore magna</p>
-
-                        <div class="border-top mt-3 pt-3">
-                            <p class="d-flex mb-0">
-                                <i class="bi-whatsapp me-2"></i>
-
-                                <a href="tel: 110-220-9800">
-                                    110-220-9800
-                                </a>
-                            </p>
-                        </div>
+                    <div class="col-lg-12 col-12">
+                        <h2 class="mb-4">{{ __('Bizning mualliflar') }}</h2>
                     </div>
-                </div>
 
-                <div class="col-lg-3 col-md-6 col-12">
-                    <img src="{{ asset('images/teams/happy-young-woman-wiping-kitchen-counter-wearing-yellow-gloves.jpg') }}" class="team-image img-fluid">
-                </div>
+                    @foreach ($authors as $author)
+                        <div class="col-lg-3 col-md-6 col-12 mb-4">
+                            <div class="featured-block h-100 text-center">
+                                <i class="bi-person-circle fs-1"></i>
 
-                <div class="col-lg-3 col-md-6 col-12 d-flex justify-content-lg-center mt-4 mt-lg-0 mt-md-0">
-                    <div class="team-info mx-auto mx-lg-0">
-                        <h4 class="mb-2">Marie</h4>
+                                <h4 class="mt-3 mb-2">{{ $author->name }}</h4>
 
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing tempor incididunt dolore magna</p>
+                                <div class="d-flex flex-wrap gap-1 justify-content-center mb-2">
+                                    @forelse($author->roles as $role)
+                                        <span class="badge bg-secondary">{{ __(ucfirst($role->name)) }}</span>
+                                    @empty
+                                        <span class="badge bg-light text-dark">{{ __('Muallif') }}</span>
+                                    @endforelse
+                                </div>
 
-                        <div class="border-top mt-3 pt-3">
-                            <p class="d-flex mb-0">
-                                <i class="bi-whatsapp me-2"></i>
-
-                                <a href="tel: 110-220-9800">
-                                    110-220-9800
-                                </a>
-                            </p>
+                                <p class="mb-0">{{ $author->posts_count }} {{ __('ta post') }}</p>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    @endforeach
 
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
 
     <section class="partners-section">
@@ -109,28 +87,18 @@
             <div class="row justify-content-center align-items-center">
 
                 <div class="col-lg-12 col-12">
-                    <h4 class="partners-section-title bg-white shadow-lg">Trusted by companies</h4>
+                    <h4 class="partners-section-title bg-white shadow-lg">{{ __('Platforma statistikasi') }}</h4>
                 </div>
 
-                <div class="col-lg-2 col-md-4 col-6">
-                    <img src="{{ asset('images/partners/toprak-leasing.svg') }}" class="partners-image img-fluid">
-                </div>
+                @foreach ($stats as $stat)
+                    <div class="col-lg-3 col-md-6 col-12 mb-4">
+                        <div class="featured-block h-100 text-center">
+                            <h3 class="mb-1">{{ number_format($stat['value'], 0, '.', ' ') }}</h3>
 
-                <div class="col-lg-2 col-md-4 col-6">
-                    <img src="{{ asset('images/partners/glorix.svg') }}" class="partners-image img-fluid">
-                </div>
-
-                <div class="col-lg-2 col-md-4 col-6">
-                    <img src="{{ asset('images/partners/woocommerce.svg') }}" class="partners-image img-fluid">
-                </div>
-
-                <div class="col-lg-2 col-md-4 col-6">
-                    <img src="{{ asset('images/partners/rolf-leasing.svg') }}" class="partners-image img-fluid">
-                </div>
-
-                <div class="col-lg-2 col-md-4 col-6">
-                    <img src="{{ asset('images/partners/unilabs.svg') }}" class="partners-image img-fluid">
-                </div>
+                            <p class="mb-0">{{ __($stat['label']) }}</p>
+                        </div>
+                    </div>
+                @endforeach
 
             </div>
         </div>

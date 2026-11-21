@@ -6,10 +6,11 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Str;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
@@ -30,10 +31,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
     public function posts()
     {
         return $this->hasMany(Post::class);
     }
+
     public function comments()
     {
         return $this->hasMany(Comment::class);
@@ -42,23 +45,32 @@ class User extends Authenticatable
     protected function name(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => ucfirst($value),
+            get: fn (string $value) => Str::title($value),
             set: fn (string $value) => strtolower(trim($value)),
         );
     }
-     public function roles()
-     {
-         return $this->belongsToMany(Role::class);
-     }
 
-     public function hasRole($roleName): bool
-     {
-         foreach ($this->roles as $role) {
-             if ($role->name === $roleName) {
-                 return true;
-             }
-         }
-         return false;
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
 
-     }
+    public function hasRole($roleName): bool
+    {
+        foreach ($this->roles as $role) {
+            if ($role->name === $roleName) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
+    public function hasAnyRole(array $roleNames): bool
+    {
+        return $this->roles->contains(
+            fn (Role $role) => in_array($role->name, $roleNames, true)
+        );
+    }
 }

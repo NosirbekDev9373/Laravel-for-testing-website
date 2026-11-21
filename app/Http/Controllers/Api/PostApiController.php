@@ -14,7 +14,7 @@ class PostApiController extends Controller
      */
     public function index()
     {
-        //return Post::limit(10)->get();
+        // return Post::limit(10)->get();
         return PostResource::collection(Post::limit(10)->get());
 
     }
@@ -29,21 +29,20 @@ class PostApiController extends Controller
             $name = $request->file('image')->getClientOriginalName();
             $imagePath = $request->file('image')->storeAs('post-images', $name, 'public');
         }
-        //Hover rasmimz
+        // Hover rasmimz
         $imageHoverPath = null;
         if ($request->hasFile('image_hover')) {
             $name = $request->file('image_hover')->getClientOriginalName();
             $imageHoverPath = $request->file('image_hover')->storeAs('post-images', $name, 'public');
         }
-        //Galareya rasmlari
+        // Galareya rasmlari
         $galleryPath = null;
         if ($request->hasFile('gallery_images')) {
             foreach ($request->file('gallery_images') as $file) {
-                $name = time() . '_' . $file->getClientOriginalName();
+                $name = time().'_'.$file->getClientOriginalName();
                 $galleryPath[] = $file->storeAs('post-images', $name, 'public');
             }
         }
-
 
         $post = Post::create([
             'user_id' => 1,

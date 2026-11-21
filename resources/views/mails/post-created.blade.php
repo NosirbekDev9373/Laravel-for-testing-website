@@ -24,8 +24,8 @@
 
         <p><strong>Sarlavha:</strong> {{ $post->title }}</p>
         <p><strong>Kategoriya:</strong> {{ $post->category->name ?? 'Yo\'q' }}</p>
-        <p><strong>Narxi:</strong> ${{ $post->price }}</p>
-        <p><strong>Ish soati:</strong> {{ $post->duration }} hrs</p>
+        <p><strong>Narxi:</strong> {{ number_format((float) $post->price, 0, ',', ' ') }} so‘m</p>
+        <p><strong>Ish soati:</strong> {{ $post->duration }} soat</p>
         <p><strong>Qisqacha:</strong> {{ $post->short_content }}</p>
 
         <a href="{{ url('/posts/' . $post->id) }}" class="btn">

@@ -14,7 +14,7 @@ class PostFactory extends Factory
             'title' => fake()->sentence(),
             'short_content' => fake()->sentence(15),
             'content' => fake()->paragraph(5),
-            'price' => fake()->randomFloat(2, 10, 500),
+            'price' => fake()->numberBetween(100000, 5000000),
             'duration' => fake()->numberBetween(1, 10),
             'image' => null,
             'image_hover' => null,

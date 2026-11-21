@@ -3,17 +3,23 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PostController;
+use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'main'])->name('main');
 Route::get('about', [PageController::class, 'about'])->name('about');
-Route::get('services', [PageController::class, 'services'])->name('services')->middleware('throttle:3');
-Route::get('servicesDetail', [PageController::class, 'servicesDetail'])->name('servicesDetail');
-Route::get('contact', [PageController::class, 'contact'])->name('contact');
+Route::get('services', [PageController::class, 'services'])->name('services');
+Route::get('servicesDetail', fn () => redirect()->route('services', [], 301))->name('servicesDetail');
+Route::get('servicesDetail/{post}', fn (Post $post) => redirect()->route('posts.show', $post, 301))
+    ->whereNumber('post')
+    ->name('servicesDetail.show');
+Route::get('contact', [ContactController::class, 'create'])->name('contact');
+Route::post('contact', [ContactController::class, 'store'])->name('contact.store')->middleware('throttle:5,1');
 
 Route::get('lang/{locale}', [LocalizationController::class, 'change'])->name('locale.change');
 
@@ -37,29 +43,39 @@ Route::middleware('auth')->group(function () {
     Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
 });
 
-// Admin panel. Faqat auth + admin middleware orqali kiriladi.
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
-    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+// Admin panel. Admin, editor va blogger panelga kira oladi.
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+    Route::middleware('staff')->group(function () {
+        Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
-    Route::get('posts', [AdminController::class, 'posts'])->name('posts.index');
-    Route::get('posts/create', [AdminController::class, 'createPost'])->name('posts.create');
-    Route::post('posts', [AdminController::class, 'storePost'])->name('posts.store');
-    Route::get('posts/{post}/edit', [AdminController::class, 'editPost'])->name('posts.edit');
-    Route::put('posts/{post}', [AdminController::class, 'updatePost'])->name('posts.update');
-    Route::delete('posts/{post}', [AdminController::class, 'destroyPost'])->name('posts.destroy');
+        Route::get('posts', [AdminController::class, 'posts'])->name('posts.index');
+        Route::get('posts/create', [AdminController::class, 'createPost'])->name('posts.create');
+        Route::post('posts', [AdminController::class, 'storePost'])->name('posts.store');
+        Route::get('posts/{post}/edit', [AdminController::class, 'editPost'])->name('posts.edit');
+        Route::put('posts/{post}', [AdminController::class, 'updatePost'])->name('posts.update');
+        Route::delete('posts/{post}', [AdminController::class, 'destroyPost'])->name('posts.destroy');
+    });
 
-    Route::get('users', [AdminController::class, 'users'])->name('users.index');
-    Route::put('users/{user}/roles', [AdminController::class, 'updateUserRole'])->name('users.roles');
-    Route::delete('users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
+    Route::middleware('admin')->group(function () {
+        Route::get('users', [AdminController::class, 'users'])->name('users.index');
+        Route::put('users/{user}/roles', [AdminController::class, 'updateUserRole'])->name('users.roles');
+        Route::delete('users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
 
-    Route::get('comments', [AdminController::class, 'comments'])->name('comments.index');
-    Route::delete('comments/{comment}', [AdminController::class, 'destroyComment'])->name('comments.destroy');
+        Route::get('comments', [AdminController::class, 'comments'])->name('comments.index');
+        Route::delete('comments/{comment}', [AdminController::class, 'destroyComment'])->name('comments.destroy');
 
-    Route::get('categories', [AdminController::class, 'categories'])->name('categories.index');
-    Route::post('categories', [AdminController::class, 'storeCategory'])->name('categories.store');
-    Route::delete('categories/{category}', [AdminController::class, 'destroyCategory'])->name('categories.destroy');
+        Route::get('contacts', [AdminController::class, 'contacts'])->name('contacts.index');
+        Route::get('contacts/{contactMessage}', [AdminController::class, 'showContact'])->name('contacts.show');
+        Route::delete('contacts/{contactMessage}', [AdminController::class, 'destroyContact'])->name('contacts.destroy');
 
-    Route::get('tags', [AdminController::class, 'tags'])->name('tags.index');
-    Route::post('tags', [AdminController::class, 'storeTag'])->name('tags.store');
-    Route::delete('tags/{tag}', [AdminController::class, 'destroyTag'])->name('tags.destroy');
+        Route::get('categories', [AdminController::class, 'categories'])->name('categories.index');
+        Route::post('categories', [AdminController::class, 'storeCategory'])->name('categories.store');
+        Route::put('categories/{category}', [AdminController::class, 'updateCategory'])->name('categories.update');
+        Route::delete('categories/{category}', [AdminController::class, 'destroyCategory'])->name('categories.destroy');
+
+        Route::get('tags', [AdminController::class, 'tags'])->name('tags.index');
+        Route::post('tags', [AdminController::class, 'storeTag'])->name('tags.store');
+        Route::put('tags/{tag}', [AdminController::class, 'updateTag'])->name('tags.update');
+        Route::delete('tags/{tag}', [AdminController::class, 'destroyTag'])->name('tags.destroy');
+    });
 });

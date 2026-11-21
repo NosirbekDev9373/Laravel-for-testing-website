@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -32,23 +33,45 @@ class PostController extends Controller
             ? $categoryId
             : null;
 
+        $search = trim($request->string('search')->toString());
+
+        if ($search !== '') {
+            $like = '%'.Str::lower($search).'%';
+
+            $posts = Post::with('category')
+                ->when($categoryId !== null, fn ($query) => $query->where('category_id', $categoryId))
+                ->where(function ($query) use ($like) {
+                    $query->whereRaw('LOWER(title) LIKE ?', [$like])
+                        ->orWhereRaw('LOWER(short_content) LIKE ?', [$like])
+                        ->orWhereRaw('LOWER(content) LIKE ?', [$like])
+                        ->orWhereHas('category', function ($query) use ($like) {
+                            $query->whereRaw('LOWER(name) LIKE ?', [$like]);
+                        });
+                })
+                ->latest('id')
+                ->paginate(4)
+                ->withQueryString();
+
+            return view('posts.index', compact('posts', 'categories', 'categoryId', 'search'));
+        }
+
         $cacheKey = 'posts_category_'.($categoryId ?? 'all');
 
         $postIds = Cache::remember($cacheKey, now()->addMinute(), function () use ($categoryId) {
             return Post::when($categoryId !== null, function ($query) use ($categoryId) {
                 $query->where('category_id', $categoryId);
             })
-                ->latest()
+                ->latest('id')
                 ->pluck('id')
                 ->toArray();
         });
 
         $posts = Post::whereIn('id', $postIds)
-            ->latest()
+            ->latest('id')
             ->paginate(4)
             ->withQueryString();
 
-        return view('posts.index', compact('posts', 'categories', 'categoryId'));
+        return view('posts.index', compact('posts', 'categories', 'categoryId', 'search'));
     }
 
     // Create
@@ -101,10 +124,9 @@ class PostController extends Controller
             ->queue((new PostCreatedMail($post))->onQueue('sending-mails'));*/
 
         // Notification — queue siz
-        auth()->user()->notifyNow(
+        auth()->user()->notify(
             new PostCreatedNotification($post->title, $post->id)
         );
-        $this->clearPostIndexCache();
 
         return redirect()->route('posts.index')->with('success', __('Post muvaffaqiyatli yaratildi!'));
     }
@@ -189,8 +211,6 @@ class PostController extends Controller
             Storage::disk('public')->delete($oldFile);
         }
 
-        $this->clearPostIndexCache();
-
         return redirect()->route('posts.index')->with('success', __('Post muvaffaqiyatli tahrirlandi!'));
     }
 
@@ -214,18 +234,8 @@ class PostController extends Controller
             }
         }
         $post->delete();
-        $this->clearPostIndexCache();
-        $user->notifyNow(new PostDeletedNotification($post));
+        $user->notify(new PostDeletedNotification($post->title));
 
         return redirect()->route('posts.index')->with('danger', __('Post muvaffaqiyatli o\'chirildi!'));
-    }
-
-    private function clearPostIndexCache(): void
-    {
-        Cache::forget('posts_category_all');
-
-        foreach (Category::pluck('id') as $categoryId) {
-            Cache::forget('posts_category_'.$categoryId);
-        }
     }
 }
