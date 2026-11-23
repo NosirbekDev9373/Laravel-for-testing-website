@@ -51,7 +51,7 @@ class ServicesTest extends TestCase
         $response->assertSee('Haqiqiy xizmat posti');
         $response->assertSee($this->category->name);
         $response->assertSee(route('posts.show', $post), false);
-        $response->assertSee(route('services', ['category' => $this->category->id]), false);
+        $response->assertSee('value="'.$this->category->id.'"', false);
         $response->assertViewHas('posts', fn ($posts) => $posts->count() === 1);
         $response->assertDontSee('servicesDetail.blade.php');
         $response->assertDontSee('services-detail.html');
