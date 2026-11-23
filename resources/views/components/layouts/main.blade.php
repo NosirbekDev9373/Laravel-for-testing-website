@@ -22,6 +22,8 @@
 
     <link href="{{ asset('css/tooplate-clean-work.css') }}" rel="stylesheet">
 
+    <link href="{{ asset('css/mobile.css') }}" rel="stylesheet">
+
     {{--@vite(['resources/css/app.css', 'resources/js/app.js'])--}}
 </head>
 

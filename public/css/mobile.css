@@ -1,0 +1,284 @@
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+.post-content {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 991.98px) {
+  .site-header {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .site-header p,
+  .site-header p a {
+    font-size: 12px;
+  }
+
+  .navbar {
+    position: relative;
+    top: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    max-width: calc(100% - 56px);
+    font-size: 16px;
+  }
+
+  .navbar-brand .logo {
+    flex: 0 0 auto;
+    width: 46px;
+    height: 46px;
+    padding: 7px;
+  }
+
+  .navbar-brand span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .navbar-collapse {
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    margin-top: 10px;
+  }
+
+  .navbar-expand-lg .navbar-nav {
+    padding-bottom: 12px;
+  }
+
+  .navbar-expand-lg .navbar-nav .nav-link {
+    margin: 3px 12px;
+  }
+
+  .navbar-expand-lg .navbar-nav .nav-link.custom-btn {
+    width: calc(100% - 24px);
+    margin: 6px 12px;
+    text-align: center;
+  }
+
+  .navbar-nav .nav-item.ms-2,
+  .navbar-nav .nav-item.ms-3,
+  .navbar-nav .nav-item.ms-lg-3 {
+    margin-left: 0 !important;
+  }
+
+  .navbar-nav .dropdown-menu {
+    left: 0;
+    max-width: none;
+    margin-top: 0;
+    padding: 6px 0;
+  }
+
+  .navbar-nav .dropdown-item {
+    padding: 8px 16px;
+  }
+
+  .site-footer .col-lg-12.d-flex {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .site-footer .footer-menu.ms-5 {
+    margin-left: 0 !important;
+  }
+
+  .site-footer-bottom .text-end {
+    text-align: center !important;
+  }
+
+  .copyright-text {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 767.98px) {
+  h1 {
+    font-size: 32px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  h3 {
+    font-size: 22px;
+  }
+
+  h4 {
+    font-size: 18px;
+  }
+
+  .section-padding {
+    padding-top: 36px;
+    padding-bottom: 36px;
+  }
+
+  .hero-section {
+    min-height: 0;
+    padding-top: 64px;
+    padding-bottom: 88px;
+  }
+
+  .hero-section h1 {
+    font-size: 26px;
+    overflow-wrap: anywhere;
+  }
+
+  .hero-section .cd-words-wrapper {
+    max-width: 100%;
+  }
+
+  .hero-section .cd-words-wrapper b {
+    white-space: normal;
+  }
+
+  .hero-section .custom-btn {
+    margin-bottom: 8px;
+  }
+
+  .hero-section svg {
+    height: 70px;
+    bottom: -1px;
+  }
+
+  .banner-section {
+    min-height: 190px;
+    padding-top: 42px;
+    padding-bottom: 28px;
+  }
+
+  .banner-section h1 {
+    font-size: 26px;
+    overflow-wrap: anywhere;
+  }
+
+  .banner-section .breadcrumb {
+    margin-top: 6px;
+    font-size: 12px;
+  }
+
+  .services-thumb {
+    padding: 16px;
+  }
+
+  .services-thumb .row {
+    --bs-gutter-x: 0;
+  }
+
+  .services-image,
+  .team-image {
+    aspect-ratio: 16 / 10;
+  }
+
+  .services-icon-wrap {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .services-info {
+    margin-top: 14px !important;
+  }
+
+  .services-detail-section .services-info {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  .services-title {
+    font-size: 18px;
+  }
+
+  .services-info p {
+    font-size: 14px;
+  }
+
+  .services-info .badge {
+    font-size: 11px;
+  }
+
+  .custom-btn {
+    font-size: 14px;
+    padding: 10px 18px;
+  }
+
+  .custom-block-wrap .custom-block {
+    position: static;
+    margin-top: 16px;
+  }
+
+  .custom-block {
+    padding: 22px;
+  }
+
+  .featured-block {
+    padding: 18px;
+  }
+
+  .site-footer {
+    padding-top: 32px;
+  }
+
+  .site-footer-bottom {
+    margin-top: 28px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
+
+  .footer-menu {
+    column-count: 1;
+  }
+
+  .form-control,
+  .form-select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .site-header .row > div {
+    justify-content: center;
+    row-gap: 4px;
+    text-align: center;
+  }
+
+  .site-header p {
+    margin-right: 0 !important;
+  }
+
+  .site-header .site-header-icon-wrap {
+    margin-left: 0 !important;
+  }
+
+  .banner-section {
+    min-height: 170px;
+    padding-top: 34px;
+    padding-bottom: 24px;
+  }
+
+  .services-thumb {
+    padding: 14px;
+  }
+
+  .site-footer-bottom .col-12 {
+    text-align: center !important;
+  }
+}
