@@ -15,34 +15,30 @@
             <x-alert>
             </x-alert>
 
-            <form method="GET" action="{{ route('posts.index') }}" class="row g-2 mb-4">
-                @if($categoryId)
-                    <input type="hidden" name="category" value="{{ $categoryId }}">
-                @endif
-                <div class="col-md-8">
+            <form method="GET" action="{{ route('posts.index') }}" class="row g-2 mb-4 align-items-end">
+                <div class="col-md-6">
                     <label for="blog-search" class="form-label">{{ __('Qidiruv') }}</label>
                     <input id="blog-search" type="search" name="search" value="{{ $search }}" class="form-control" placeholder="{{ __('Sarlavha, mazmun yoki kategoriya bo‘yicha qidirish') }}">
                 </div>
-                <div class="col-md-4 d-flex align-items-end gap-2">
+                <div class="col-md-3">
+                    <label for="blog-category" class="form-label">{{ __('Kategoriya') }}</label>
+                    <select id="blog-category" name="category" class="form-select" onchange="this.form.submit()">
+                        <option value="">{{ __('Barchasi') }}</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" @selected($categoryId === $category->id)>{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end gap-2">
                     <button type="submit" class="btn btn-dark"><i class="bi bi-search me-1"></i>{{ __('Qidirish') }}</button>
-                    @if($search !== '')
-                        <a href="{{ route('posts.index', array_filter(['category' => $categoryId])) }}" class="btn btn-outline-dark">{{ __('Tozalash') }}</a>
+                    @if($search !== '' || $categoryId)
+                        <a href="{{ route('posts.index') }}" class="btn btn-outline-dark">{{ __('Tozalash') }}</a>
                     @endif
                 </div>
             </form>
 
-            <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
-                <a href="{{ route('posts.index', array_filter(['search' => $search])) }}"
-                   class="btn btn-sm {{ !$categoryId ? 'btn-dark' : 'btn-outline-dark' }}">
-                    {{ __('Barchasi') }}
-                </a>
-                @foreach($categories as $category)
-                    <a href="{{ route('posts.index', array_filter(['category' => $category->id, 'search' => $search])) }}"
-                       class="btn btn-sm {{ $categoryId === $category->id ? 'btn-dark' : 'btn-outline-dark' }}">
-                        {{ $category->name }}
-                    </a>
-                @endforeach
-                <span class="text-secondary small ms-auto">{{ $posts->total() }} {{ __('ta post') }}</span>
+            <div class="d-flex justify-content-end mb-3">
+                <span class="text-secondary small">{{ $posts->total() }} {{ __('ta post') }}</span>
             </div>
         </div>
         {{-- End Search and category filter --}}
